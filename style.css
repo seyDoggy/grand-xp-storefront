@@ -8,6 +8,9 @@ Template: storefront
 a:focus, input:focus, textarea:focus, button:focus {
     outline: none;
 }
+.hentry .entry-content a {
+    text-decoration: none;
+}
 .tax-product_cat.right-sidebar .content-area,
 .single-product.right-sidebar .content-area,
 .tax-product_cat.left-sidebar .content-area,
