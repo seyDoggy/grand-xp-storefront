@@ -1,0 +1,26 @@
+/* 
+Theme Name: Grand-XP child theme of storefront
+Version: 1.0.0
+Author: Adam Merrifield
+Author URI: https://seydoggy.com
+Template: storefront
+*/
+.tax-product_cat.right-sidebar .content-area,
+.single-product.right-sidebar .content-area,
+.tax-product_cat.left-sidebar .content-area,
+.single-product.left-sidebar .content-area {
+    width: 100%;
+    float: left;
+    margin-right: 0;
+}
+.page-id-287 #masthead {
+	margin-bottom: 0;
+}
+@media (min-width: 768px) {
+    .site-header .site-branding img {
+        max-width: 100%;
+    }
+}
+input#woocommerce-product-search-field-0.search-field {
+	border-radius: 100px;
+}
