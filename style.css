@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.1
+Version: 1.0.2
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -33,6 +33,13 @@ body.home .edit-link {
 }
 .woocommerce-product-search .search-field {
 	border-radius: 100px;
+}
+.storefront-sorting select {
+    width: auto;
+    box-shadow: inset 0 1px 1px 1px rgba(0, 0, 0, .125);
+    border-radius: 100px;
+    padding: 0.35em 0.75em;
+    border: 0;
 }
 @media (max-width: 767px) {
 	button.menu-toggle, button.menu-toggle:hover {
