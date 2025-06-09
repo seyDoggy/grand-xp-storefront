@@ -5,6 +5,9 @@ Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
 */
+a:focus, input:focus, textarea:focus, button:focus {
+    outline: none;
+}
 .tax-product_cat.right-sidebar .content-area,
 .single-product.right-sidebar .content-area,
 .tax-product_cat.left-sidebar .content-area,
@@ -13,14 +16,46 @@ Template: storefront
     float: left;
     margin-right: 0;
 }
-.page-id-287 #masthead {
+body.home #masthead {
 	margin-bottom: 0;
 }
-@media (min-width: 768px) {
-    .site-header .site-branding img {
-        max-width: 100%;
-    }
+body.home .site-main {
+	margin-bottom: 0;
 }
-input#woocommerce-product-search-field-0.search-field {
+body.home .edit-link {
+	display: none;
+}
+#masthead {
+	padding-top: 0;
+}
+.site-header .site-branding img {
+        max-width: 100%;
+}
+.woocommerce-product-search .search-field {
 	border-radius: 100px;
+}
+@media (max-width: 767px) {
+	button.menu-toggle, button.menu-toggle:hover {
+        border: none;
+        padding-left: 0;
+        position: absolute;
+        height: 100%;
+        right: 2em;
+    }
+	button.menu-toggle::before, button.menu-toggle::after, button.menu-toggle span::before {
+    	left: -1.5em;
+	}
+}
+@media (min-width: 768px) {
+    .woocommerce-active .site-header .site-search {
+		display: flex;
+		align-items: center;
+    }
+	#masthead > .col-full {
+		display: flex;
+		align-content: center;
+	}
+	body.home .content-area, .widget-area {
+        margin-bottom: 0;
+    }
 }

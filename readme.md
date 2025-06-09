@@ -1,6 +1,6 @@
 # Seydoggy Storefront
 
-Seydoggy Storefront is a child theme of the popular [WooCommerce Storefront](https://woocommerce.com/storefront/) theme. It is designed to extend the functionality and styling of the parent theme while maintaining compatibility with WooCommerce.
+Grand-XP Storefront is a child theme of the popular [WooCommerce Storefront](https://woocommerce.com/storefront/) theme. It is designed to extend the functionality and styling of the parent theme while maintaining compatibility with WooCommerce.
 
 ## Installation
 
