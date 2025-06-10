@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.3
+Version: 1.0.4
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -11,7 +11,9 @@ a:focus, input:focus, textarea:focus, button:focus {
 .hentry .entry-content a {
     text-decoration: none;
 }
-button, input[type=button],
+.hentry .entry-content .wp-block-button .wp-block-button__link,
+.editor-styles-wrapper .wp-block-button .wp-block-button__link,
+input[type=button],
 input[type=reset],
 input[type=submit],
 .button,
