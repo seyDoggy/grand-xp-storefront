@@ -11,6 +11,14 @@ a:focus, input:focus, textarea:focus, button:focus {
 .hentry .entry-content a {
     text-decoration: none;
 }
+button, input[type=button],
+input[type=reset],
+input[type=submit],
+.button,
+.wc-block-grid__products .wc-block-grid__product .wp-block-button__link,
+.added_to_cart {
+    border-radius: 100px;
+}
 .tax-product_cat.right-sidebar .content-area,
 .single-product.right-sidebar .content-area,
 .tax-product_cat.left-sidebar .content-area,
