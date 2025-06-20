@@ -20,3 +20,15 @@ function grand_xp_storefront_enqueue_styles()
         'all'
     );
 }
+
+add_filter('manage_edit-shop_order_columns', function($columns) {
+    $columns['ip_address'] = 'IP Address';
+    return $columns;
+});
+
+add_action('manage_shop_order_posts_custom_column', function($column, $post_id) {
+    if ($column == 'ip_address') {
+        $order = wc_get_order($post_id);
+        echo $order->get_customer_ip_address();
+    }
+}, 10, 2);
