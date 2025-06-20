@@ -21,14 +21,34 @@ function grand_xp_storefront_enqueue_styles()
     );
 }
 
-add_filter('manage_edit-shop_order_columns', function($columns) {
-    $columns['ip_address'] = 'IP Address';
-    return $columns;
-});
-
-add_action('manage_shop_order_posts_custom_column', function($column, $post_id) {
-    if ($column == 'ip_address') {
-        $order = wc_get_order($post_id);
-        echo $order->get_customer_ip_address();
+/**
+* Inspired by https://stackoverflow.com/questions/53140009/add-search-by-customer-ip-address-to-woocommerce-order-search
+* Code idea borrowed from https://www.skyverge.com/blog/filtering-woocommerce-orders/ && https://gist.github.com/bekarice/41bce677437cb8f312ed77e9f226a812
+*/
+add_filter( 'request', 'filter_orders_by_payment_method_query' );	
+function filter_orders_by_payment_method_query( $vars ) {
+    
+    global $typenow;
+    if ( 'shop_order' === $typenow && isset( $_GET['_shop_order_ip'] ) ) {
+        $vars['meta_key']   = '_customer_ip_address';
+        $vars['meta_value'] = wc_clean( $_GET['_shop_order_ip'] );
     }
-}, 10, 2);
+    return $vars;
+}
+
+
+
+// UPDATED: April 11, 2024
+// This is for HPOS
+/**
+* Inspired by https://stackoverflow.com/questions/53140009/add-search-by-customer-ip-address-to-woocommerce-order-search
+* Code idea borrowed from https://www.skyverge.com/blog/filtering-woocommerce-orders/ && https://gist.github.com/bekarice/41bce677437cb8f312ed77e9f226a812
+*/
+add_filter( 'woocommerce_order_query_args', 'managedwphosting_woocommerce_order_query_args' );
+function managedwphosting_woocommerce_order_query_args( $args ) {
+    if ( isset( $_GET['page'] ) && $_GET['page'] === 'wc-orders' && isset( $_GET['_shop_order_ip'] ) ) {
+        $args['ip_address'] = wc_clean( $_GET['_shop_order_ip'] );
+    }
+    
+    return $args;
+}
