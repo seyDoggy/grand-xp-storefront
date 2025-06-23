@@ -30,7 +30,7 @@ function anti_fraud_ip_checker() {
         'customer_ip_address' => $customer_ip,
         'paginate'            => true  // adds a total field to the results
     ));
-    if(empty($customer_ip) || $last_1_hour_from_ip_results->total > 4) { 
+    if(empty($customer_ip) || $last_1_hour_from_ip_results->total > 10) { 
         wc_add_notice('Too many attempts in the last hour. Please return later.', 'error');
     }
 }
