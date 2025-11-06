@@ -5,7 +5,7 @@ add_action('wp_enqueue_scripts', 'grand_xp_storefront_enqueue_styles');
 
 add_action('woocommerce_checkout_process', 'anti_fraud_ip_checker', 10, 0);
 
-add_action( 'init', 'remove_storefront_footer_credit' );
+add_action( 'init', 'remove_sf_actions' );
 
 /**
  * Remove the Storefront sidebar on product and product category pages.
@@ -19,10 +19,13 @@ function remove_storefront_sidebar()
 
 /**
  * Disable the Search Box in the Storefront Theme
+ * Remove the cart feature in the Storefront Theme
+ * Remove the Storefront footer credit.
  */
-add_action( 'init', 'remove_sf_actions' );
 function remove_sf_actions() {
 	remove_action( 'storefront_header', 'storefront_product_search', 40 );
+	remove_action( 'storefront_header', 'storefront_header_cart', 60 );
+	remove_action( 'storefront_footer', 'storefront_credit', 20 );
 }
 
 /**
@@ -58,14 +61,4 @@ function anti_fraud_ip_checker() {
     if(empty($customer_ip) || $last_1_hour_from_ip_results->total > 10) { 
         wc_add_notice('Too many attempts in the last hour. Please return later.', 'error');
     }
-}
-
-/**
- * Remove the Storefront footer credit.
- * This function removes the default footer credit from the Storefront theme.
- */
-// This function uses the WordPress action hook to remove the footer credit from the Storefront theme
-// by removing the 'storefront_credit' function from the 'storefront_footer' action hook
-function remove_storefront_footer_credit() {
-    remove_action( 'storefront_footer', 'storefront_credit', 20 );
 }
