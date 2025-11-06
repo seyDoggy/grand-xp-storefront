@@ -18,6 +18,14 @@ function remove_storefront_sidebar()
 }
 
 /**
+ * Disable the Search Box in the Storefront Theme
+ */
+add_action( 'init', 'remove_sf_actions' );
+function remove_sf_actions() {
+	remove_action( 'storefront_header', 'storefront_product_search', 40 );
+}
+
+/**
  * Enqueue the Grand XP Storefront styles.
  */
 // This function will load the main stylesheet of the child theme.
