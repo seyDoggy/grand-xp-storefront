@@ -26,13 +26,14 @@ function remove_sf_actions() {
 	remove_action( 'storefront_header', 'storefront_product_search', 40 );
 	remove_action( 'storefront_header', 'storefront_header_cart', 60 );
 	remove_action( 'storefront_footer', 'storefront_credit', 20 );
+    remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
 }
 
 /**
  * Enqueue the Grand XP Storefront styles.
+ * This function will load the main stylesheet of the child theme.
+ * It assumes that the child theme's style.css file is located in the root directory of the
  */
-// This function will load the main stylesheet of the child theme.
-// It assumes that the child theme's style.css file is located in the root directory of the
 function grand_xp_storefront_enqueue_styles()
 {
     wp_enqueue_style(
