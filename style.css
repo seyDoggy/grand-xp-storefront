@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.16
+Version: 1.0.17
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -53,10 +53,6 @@ body.home .edit-link {
     border-radius: 100px;
     padding: 0.35em 0.75em;
     border: 0;
-}
-/* custom style for instagram feed */
-.sbi_feedtheme_header_text h3 {
-	color: #FFFFFFBF;
 }
 @media (max-width: 767px) {
 	button.menu-toggle, button.menu-toggle:hover {
