@@ -38,12 +38,6 @@ body.home .site-main {
 body.home .edit-link {
 	display: none;
 }
-#masthead {
-	padding-top: 0;
-}
-.site-header .site-branding img {
-        max-width: 100%;
-}
 .woocommerce-product-search .search-field {
 	border-radius: 100px;
 }
