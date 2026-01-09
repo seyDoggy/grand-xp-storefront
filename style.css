@@ -35,7 +35,7 @@ body.home #masthead {
 body.home .site-main {
 	margin-bottom: 0;
 }
-body.home .edit-link {
+.edit-link {
 	display: none;
 }
 .woocommerce-product-search .search-field {
