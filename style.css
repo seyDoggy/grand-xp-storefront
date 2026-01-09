@@ -32,7 +32,7 @@ input[type=submit],
 body.home #masthead {
 	margin-bottom: 0;
 }
-body.home .site-main {
+.content-area, .site-main, .hentry {
 	margin-bottom: 0;
 }
 .edit-link {
