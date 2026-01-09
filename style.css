@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.21
+Version: 1.0.22
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -61,4 +61,64 @@ body.home #masthead {
     	left: -1.5em;
         top: 19px;
 	}
+}
+
+.woocommerce-active .site-header .site-branding {
+	width: 50%;
+}
+
+/* Position the Book Now button where the Search bar used to be */
+.header-cta-wrapper {
+    float: right;
+    margin-top: 10px;
+    margin-right: 0;
+}
+
+/* Style the button */
+.header-book-now {
+    background-color: #0693e3;
+    color: #fff !important;
+    padding: 12px 25px;
+    font-weight: 700;
+    text-transform: uppercase;
+    border-radius: 100px;
+    text-decoration: none;
+    display: inline-block;
+}
+
+.header-book-now:hover {
+    background-color: #007aca;
+    color: #fff !important;
+}
+
+/* Mobile Alignment */
+@media (max-width: 768px) {
+    /* 1. Fix the wrapper to the bottom of the viewport */
+    .header-cta-wrapper {
+        position: fixed !important;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        margin: 0 !important;
+        padding: 10px 15px;      /* Spacing around the button */
+        background-color: #42560c;
+        box-shadow: 0 -4px 10px rgba(0,0,0,0.1); /* subtle shadow */
+        z-index: 99999;          /* Ensure it sits on top of everything */
+        float: none;
+        width: 100%;
+    }
+
+    /* 2. Make the button full-width and centered */
+    .header-book-now {
+        display: block !important;
+        width: 100%;
+        text-align: center;
+        margin-top: 0;
+        font-size: 16px; /* Ensure text is readable */
+    }
+
+    /* 3. Add padding to the bottom of the site so the bar doesn't cover footer content */
+    body {
+        padding-bottom: 70px;
+    }
 }

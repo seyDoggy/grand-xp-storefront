@@ -1,66 +1,85 @@
 <?php
-add_action('get_header', 'remove_storefront_sidebar');
-
-add_action('wp_enqueue_scripts', 'grand_xp_storefront_enqueue_styles');
-
-add_action('woocommerce_checkout_process', 'anti_fraud_ip_checker', 10, 0);
-
-add_action( 'init', 'remove_sf_actions' );
-
 /**
- * Remove the Storefront sidebar on product and product category pages.
+ * Grand Experiences Storefront Child Theme Functions
  */
-function remove_storefront_sidebar()
-{
-    if ( is_product() || is_product_category()) {
-        remove_action('storefront_sidebar', 'storefront_get_sidebar', 10);
+
+// 1. Enqueue Styles
+add_action('wp_enqueue_scripts', 'grand_xp_storefront_enqueue_styles');
+function grand_xp_storefront_enqueue_styles() {
+    wp_enqueue_style( 
+        'grand-xp-storefront-style', 
+        get_stylesheet_uri(), 
+        array(), 
+        null, 
+        'all' 
+    );
+}
+
+// 2. Clean Up Storefront Elements (Search, Cart, Credits, Breadcrumbs)
+add_action( 'init', 'clean_up_storefront_actions' );
+function clean_up_storefront_actions() {
+    // Remove Search and Cart
+    remove_action( 'storefront_header', 'storefront_product_search', 40 );
+    remove_action( 'storefront_header', 'storefront_header_cart', 60 );
+    
+    // Remove Footer Credits
+    remove_action( 'storefront_footer', 'storefront_credit', 20 );
+    remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
+
+    // Remove Breadcrumbs (Both Standard and Woo versions)
+    remove_action( 'storefront_content_top', 'storefront_breadcrumb', 10 );
+    remove_action( 'storefront_content_top', 'woocommerce_breadcrumb', 10 );
+}
+
+// 3. Disable "Install WooCommerce" Admin Notice
+add_action( 'wp_loaded', function() {
+    remove_action( 'admin_notices', 'storefront_is_woocommerce_activated_notice' );
+    remove_action( 'admin_notices', 'storefront_welcome_notice' );
+});
+
+// 4. Add "Book Your Adventure" Button to Header (Homepage Only)
+add_action( 'storefront_header', 'add_cta_to_storefront_header', 40 );
+function add_cta_to_storefront_header() {
+    // Only show on the Front Page
+    if ( is_front_page() ) {
+        ?>
+        <div class="header-cta-wrapper">
+             <a href="https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255" onclick="return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));" 
+               class="button header-book-now">
+               Book Your Adventure
+            </a>
+        </div>
+        <?php
     }
 }
 
 /**
- * Disable the Search Box in the Storefront Theme
- * Remove the cart feature in the Storefront Theme
- * Remove the Storefront footer credit.
- * Removes the Storefront breadcrumbs
+ * 5. WOOCOMMERCE DEPENDENCY WRAPPER
+ * All code inside this block only runs if WooCommerce is active.
+ * This prevents your site from crashing when you delete the plugin.
  */
-function remove_sf_actions() {
-	remove_action( 'storefront_header', 'storefront_product_search', 40 );
-	remove_action( 'storefront_header', 'storefront_header_cart', 60 );
-	remove_action( 'storefront_footer', 'storefront_credit', 20 );
-    remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
-}
+if ( class_exists( 'WooCommerce' ) ) {
 
-/**
- * Enqueue the Grand XP Storefront styles.
- * This function will load the main stylesheet of the child theme.
- * It assumes that the child theme's style.css file is located in the root directory of the
- */
-function grand_xp_storefront_enqueue_styles()
-{
-    wp_enqueue_style(
-        'grand-xp-storefront-style',
-        get_stylesheet_uri(),
-        array(),
-        null,
-        'all'
-    );
-}
+    add_action('get_header', 'remove_storefront_sidebar');
+    add_action('woocommerce_checkout_process', 'anti_fraud_ip_checker', 10, 0);
 
-/**
- * Anti-fraud IP checker.
- * This function checks if the customer's IP address has made more than 10 orders in the last hour.
- * If so, it adds an error notice to the checkout process.
- */
-// This function uses WooCommerce's geolocation and order retrieval functions to check the number of orders
-// made from the customer's IP address in the last hour. If the count exceeds 10,
-function anti_fraud_ip_checker() {
-    $customer_ip = WC_Geolocation::get_ip_address();
-    $last_1_hour_from_ip_results = wc_get_orders(array(
-        'date_created'        => '>=' . (time() - 3600), // time in seconds
-        'customer_ip_address' => $customer_ip,
-        'paginate'            => true  // adds a total field to the results
-    ));
-    if(empty($customer_ip) || $last_1_hour_from_ip_results->total > 10) { 
-        wc_add_notice('Too many attempts in the last hour. Please return later.', 'error');
+    function remove_storefront_sidebar() {
+        if ( is_product() || is_product_category()) {
+            remove_action('storefront_sidebar', 'storefront_get_sidebar', 10);
+        }
+    }
+
+    function anti_fraud_ip_checker() {
+        $customer_ip = WC_Geolocation::get_ip_address();
+        // Check if orders exist before accessing properties
+        $last_1_hour_from_ip_results = wc_get_orders(array(
+            'date_created'        => '>=' . (time() - 3600),
+            'customer_ip_address' => $customer_ip,
+            'paginate'            => true
+        ));
+        
+        if(empty($customer_ip) || (isset($last_1_hour_from_ip_results->total) && $last_1_hour_from_ip_results->total > 10)) { 
+            wc_add_notice('Too many attempts in the last hour. Please return later.', 'error');
+        }
     }
 }
