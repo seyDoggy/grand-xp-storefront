@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.19
+Version: 1.0.20
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -53,10 +53,12 @@ body.home #masthead {
         border: none;
         padding-left: 0;
         position: absolute;
-        height: 100%;
+        top: 40px;
+        height: auto;
         right: 2em;
     }
 	button.menu-toggle::before, button.menu-toggle::after, button.menu-toggle span::before {
     	left: -1.5em;
+        top: 19px;
 	}
 }
