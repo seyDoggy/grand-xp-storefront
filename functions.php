@@ -28,8 +28,6 @@ function remove_sf_actions() {
 	remove_action( 'storefront_header', 'storefront_header_cart', 60 );
 	remove_action( 'storefront_footer', 'storefront_credit', 20 );
     remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
-    remove_action( 'woocommerce_before_main_content', 'woocommerce_breadcrumb', 20, 0 );
-    remove_action( 'storefront_content_top', 'storefront_breadcrumb', 10 );
 }
 
 /**
