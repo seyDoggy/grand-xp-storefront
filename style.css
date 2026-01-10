@@ -1,26 +1,47 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.22
+Version: 1.0.23
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
 */
-a:focus, input:focus, textarea:focus, button:focus {
+/* =========================================
+   1. Global & Typography
+   ========================================= */
+a:focus,
+input:focus,
+textarea:focus,
+button:focus {
     outline: none;
 }
-.hentry .entry-content a {
+
+.hentry .entry-content a,
+.site-footer a {
     text-decoration: none;
 }
-.hentry .entry-content .wp-block-button .wp-block-button__link,
-.editor-styles-wrapper .wp-block-button .wp-block-button__link,
-input[type=button],
-input[type=reset],
-input[type=submit],
-.button,
-.wc-block-grid__products .wc-block-grid__product .wp-block-button__link,
-.added_to_cart {
-    border-radius: 100px;
+
+.edit-link {
+    display: none;
 }
+
+/* =========================================
+   2. Layout & Structure
+   ========================================= */
+body.home #masthead {
+    margin-bottom: 0;
+}
+
+.content-area,
+.site-main,
+.hentry {
+    margin-bottom: 0;
+}
+
+.woocommerce-active .site-header .site-branding {
+    width: 50%;
+}
+
+/* Storefront Sidebar Overrides */
 .tax-product_cat.right-sidebar .content-area,
 .single-product.right-sidebar .content-area,
 .tax-product_cat.left-sidebar .content-area,
@@ -29,18 +50,22 @@ input[type=submit],
     float: left;
     margin-right: 0;
 }
-body.home #masthead {
-	margin-bottom: 0;
-}
-.content-area, .site-main, .hentry {
-	margin-bottom: 0;
-}
-.edit-link {
-	display: none;
-}
+
+/* =========================================
+   3. Buttons & Forms
+   ========================================= */
+.hentry .entry-content .wp-block-button .wp-block-button__link,
+.editor-styles-wrapper .wp-block-button .wp-block-button__link,
+input[type=button],
+input[type=reset],
+input[type=submit],
+.button,
+.wc-block-grid__products .wc-block-grid__product .wp-block-button__link,
+.added_to_cart,
 .woocommerce-product-search .search-field {
-	border-radius: 100px;
+    border-radius: 100px;
 }
+
 .storefront-sorting select {
     width: auto;
     box-shadow: inset 0 1px 1px 1px rgba(0, 0, 0, .125);
@@ -48,33 +73,16 @@ body.home #masthead {
     padding: 0.35em 0.75em;
     border: 0;
 }
-@media (max-width: 767px) {
-	button.menu-toggle, button.menu-toggle:hover {
-        border: none;
-        padding-left: 0;
-        position: absolute;
-        top: 40px;
-        height: auto;
-        right: 2em;
-    }
-	button.menu-toggle::before, button.menu-toggle::after, button.menu-toggle span::before {
-    	left: -1.5em;
-        top: 19px;
-	}
-}
 
-.woocommerce-active .site-header .site-branding {
-	width: 50%;
-}
-
-/* Position the Book Now button where the Search bar used to be */
+/* =========================================
+   4. Custom Header CTA (Book Now)
+   ========================================= */
 .header-cta-wrapper {
     float: right;
     margin-top: 10px;
     margin-right: 0;
 }
 
-/* Style the button */
 .header-book-now {
     background-color: #0693e3;
     color: #fff !important;
@@ -91,33 +99,56 @@ body.home #masthead {
     color: #fff !important;
 }
 
-/* Mobile Alignment */
+/* =========================================
+   5. Media Queries (Mobile)
+   ========================================= */
+@media (max-width: 767px) {
+
+    /* Mobile Menu Toggle */
+    button.menu-toggle,
+    button.menu-toggle:hover {
+        border: none;
+        padding-left: 0;
+        position: absolute;
+        top: 40px;
+        height: auto;
+        right: 2em;
+    }
+
+    button.menu-toggle::before,
+    button.menu-toggle::after,
+    button.menu-toggle span::before {
+        left: -1.5em;
+        top: 19px;
+    }
+}
+
 @media (max-width: 768px) {
-    /* 1. Fix the wrapper to the bottom of the viewport */
+
+    /* Header CTA - Fixed Bottom Bar */
     .header-cta-wrapper {
         position: fixed !important;
         bottom: 0;
         left: 0;
         right: 0;
         margin: 0 !important;
-        padding: 10px 15px;      /* Spacing around the button */
+        padding: 10px 15px;
         background-color: #42560c;
-        box-shadow: 0 -4px 10px rgba(0,0,0,0.1); /* subtle shadow */
-        z-index: 99999;          /* Ensure it sits on top of everything */
+        box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.1);
+        z-index: 99999;
         float: none;
         width: 100%;
     }
 
-    /* 2. Make the button full-width and centered */
     .header-book-now {
         display: block !important;
         width: 100%;
         text-align: center;
         margin-top: 0;
-        font-size: 16px; /* Ensure text is readable */
+        font-size: 16px;
     }
 
-    /* 3. Add padding to the bottom of the site so the bar doesn't cover footer content */
+    /* Prevent footer overlap */
     body {
         padding-bottom: 70px;
     }
