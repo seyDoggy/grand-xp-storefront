@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.23
+Version: 1.0.24
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -74,6 +74,12 @@ input[type=submit],
     border: 0;
 }
 
+/* Make the first menu item (Book Now) stand out */
+.main-navigation ul.menu > li:first-child > a {
+    text-transform: uppercase;
+	font-weight: bold;
+}
+
 /* =========================================
    4. Custom Header CTA (Book Now)
    ========================================= */
@@ -97,6 +103,47 @@ input[type=submit],
 .header-book-now:hover {
     background-color: #007aca;
     color: #fff !important;
+}
+
+/* Dropdown Animation & Styling - Desktop Only */
+@media (min-width: 768px) {
+
+    /* 1. Ensure the parent menu item is the anchor point */
+    .main-navigation ul li {
+        position: relative;
+    }
+
+    /* 2. Set the starting state of the dropdown */
+    .main-navigation ul ul {
+        display: block !important;       /* Force it to 'exist' */
+        
+        /* Positioning & Size */
+        position: absolute;
+        left: 0 !important;              /* Override theme's off-screen hiding */
+        top: 100%;                       /* Position directly below parent */
+        width: 220px;                    /* Slightly wider for better readability */
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Add depth */
+        
+        /* ROUNDED BOTTOM CORNERS */
+        /* Top-left, Top-right, Bottom-right, Bottom-left */
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;                /* Ensures content doesn't bleed past the rounded corners */
+
+        /* Animation Start State */
+        opacity: 0;                      /* Transparent */
+        visibility: hidden;              /* Not clickable */
+        transform: translateY(20px);     /* Start 20px lower */
+        transition: all 0.3s ease-in-out; /* Smooth transition */
+        z-index: 999;                    /* Ensure it's on top of content */
+    }
+
+    /* 3. Set the end state on Hover */
+    .main-navigation ul li:hover > ul,
+    .main-navigation ul li:focus-within > ul {
+        opacity: 1;                      /* Fully visible */
+        visibility: visible;             /* Clickable */
+        transform: translateY(0);        /* Slide up into place */
+    }
 }
 
 /* =========================================
