@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.24
+Version: 1.0.25
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -37,8 +37,12 @@ body.home #masthead {
     margin-bottom: 0;
 }
 
-.woocommerce-active .site-header .site-branding {
+.site-header .site-branding {
     width: 50%;
+}
+
+.site-header .site-branding > a > img {
+	max-width: 300px;
 }
 
 /* Storefront Sidebar Overrides */
