@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.26
+Version: 1.0.27
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -199,8 +199,8 @@ input[type=submit],
         font-size: 16px;
     }
 
-    /* Prevent footer overlap */
-    body {
+    /* Prevent footer overlap - ONLY when CTA is present */
+    body.has-sticky-cta {
         padding-bottom: 70px;
     }
 }

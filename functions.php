@@ -38,8 +38,8 @@ add_action( 'wp_loaded', function() {
 });
 
 // 4. Add "Book Your Adventure" Button to Header (Exclude /find-your-experience/ + children, and /contact-us/)
-add_action( 'storefront_header', 'add_cta_to_storefront_header', 40 );
-function add_cta_to_storefront_header() {
+// Helper: Check if the CTA should be shown
+function ge_should_show_header_cta() {
     global $post;
     
     // Define the slug of the parent page to exclude along with its children
@@ -47,13 +47,27 @@ function add_cta_to_storefront_header() {
     $parent_page = get_page_by_path( $parent_slug );
     $parent_id   = $parent_page ? $parent_page->ID : 0;
 
-    // Check exclusion conditions
+    // Check exclusion conditions (Add any other excluded pages here)
     $is_excluded = is_page( $parent_slug ) 
-                || ( $parent_id && is_page() && in_array( $parent_id, get_post_ancestors( $post ) ) )
+                || ( $parent_id && is_page() && ! empty( $post ) && in_array( $parent_id, get_post_ancestors( $post ) ) )
                 || is_page( 'contact-us' );
 
-    // Show if NOT excluded
-    if ( ! $is_excluded ) {
+    return ! $is_excluded;
+}
+
+// Add custom class 'has-sticky-cta' to body if conditions are met
+add_filter( 'body_class', 'ge_add_cta_body_class' );
+function ge_add_cta_body_class( $classes ) {
+    if ( ge_should_show_header_cta() ) {
+        $classes[] = 'has-sticky-cta';
+    }
+    return $classes;
+}
+
+// Add the HTML to the header
+add_action( 'storefront_header', 'add_cta_to_storefront_header', 40 );
+function add_cta_to_storefront_header() {
+    if ( ge_should_show_header_cta() ) {
         ?>
         <div class="header-cta-wrapper">
              <a href="https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255" onclick="return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));" 
