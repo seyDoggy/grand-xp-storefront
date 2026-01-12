@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.25
+Version: 1.0.26
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -27,7 +27,7 @@ button:focus {
 /* =========================================
    2. Layout & Structure
    ========================================= */
-body.home #masthead {
+#masthead, .no-wc-breadcrumb .site-header {
     margin-bottom: 0;
 }
 
