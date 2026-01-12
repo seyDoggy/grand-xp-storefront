@@ -37,11 +37,23 @@ add_action( 'wp_loaded', function() {
     remove_action( 'admin_notices', 'storefront_welcome_notice' );
 });
 
-// 4. Add "Book Your Adventure" Button to Header (Homepage Only)
+// 4. Add "Book Your Adventure" Button to Header (Exclude /find-your-experience/ + children, and /contact-us/)
 add_action( 'storefront_header', 'add_cta_to_storefront_header', 40 );
 function add_cta_to_storefront_header() {
-    // Only show on the Front Page
-    if ( is_front_page() ) {
+    global $post;
+    
+    // Define the slug of the parent page to exclude along with its children
+    $parent_slug = 'find-your-experience';
+    $parent_page = get_page_by_path( $parent_slug );
+    $parent_id   = $parent_page ? $parent_page->ID : 0;
+
+    // Check exclusion conditions
+    $is_excluded = is_page( $parent_slug ) 
+                || ( $parent_id && is_page() && in_array( $parent_id, get_post_ancestors( $post ) ) )
+                || is_page( 'contact-us' );
+
+    // Show if NOT excluded
+    if ( ! $is_excluded ) {
         ?>
         <div class="header-cta-wrapper">
              <a href="https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255" onclick="return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));" 
