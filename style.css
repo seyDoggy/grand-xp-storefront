@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.27
+Version: 1.0.28
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -8,6 +8,9 @@ Template: storefront
 /* =========================================
    1. Global & Typography
    ========================================= */
+body {
+    background-color: #f9efd6;
+}
 a:focus,
 input:focus,
 textarea:focus,
@@ -43,6 +46,11 @@ button:focus {
 
 .site-header .site-branding > a > img {
 	max-width: 300px;
+}
+
+/* GE Product page group styling overrides */
+:where(.ge-product-header.wp-block-group.has-background) {
+    padding: 0 ! important;
 }
 
 /* Storefront Sidebar Overrides */
@@ -94,7 +102,7 @@ input[type=submit],
 }
 
 .header-book-now {
-    background-color: #0693e3;
+    background-color: #d76025;
     color: #fff !important;
     padding: 12px 25px;
     font-weight: 700;
@@ -105,7 +113,7 @@ input[type=submit],
 }
 
 .header-book-now:hover {
-    background-color: #007aca;
+    background-color: #ce561a;
     color: #fff !important;
 }
 
