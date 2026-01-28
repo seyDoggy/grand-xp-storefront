@@ -29,6 +29,9 @@ function clean_up_storefront_actions() {
     // Remove Breadcrumbs (Both Standard and Woo versions)
     remove_action( 'storefront_content_top', 'storefront_breadcrumb', 10 );
     remove_action( 'storefront_content_top', 'woocommerce_breadcrumb', 10 );
+
+    // Remove Page Title & Header
+    remove_action( 'storefront_page', 'storefront_page_header', 10 );
 }
 
 // 3. Disable "Install WooCommerce" Admin Notice
@@ -50,7 +53,8 @@ function ge_should_show_header_cta() {
     // Check exclusion conditions (Add any other excluded pages here)
     $is_excluded = is_page( $parent_slug ) 
                 || ( $parent_id && is_page() && ! empty( $post ) && in_array( $parent_id, get_post_ancestors( $post ) ) )
-                || is_page( 'contact-us' );
+                || is_page( 'contact-us' )
+				|| is_page('contest');
 
     return ! $is_excluded;
 }
