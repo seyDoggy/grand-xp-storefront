@@ -1,6 +1,6 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.29
+Version: 1.0.30
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -25,6 +25,16 @@ body:not(.single-post):not(.archive):not(.blog) h4,
 body:not(.single-post):not(.archive):not(.blog) h5,
 body:not(.single-post):not(.archive):not(.blog) h6 {
     color: #ffffff;
+}
+
+/* Fix Tables on Pages: Remove white backgrounds and striping */
+body:not(.single-post):not(.archive):not(.blog) .wp-block-table table,
+body:not(.single-post):not(.archive):not(.blog) .wp-block-table tr,
+body:not(.single-post):not(.archive):not(.blog) .wp-block-table th,
+body:not(.single-post):not(.archive):not(.blog) .wp-block-table td {
+    background-color: transparent !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.3); /* Optional: adds a subtle white border */
 }
 
 a:focus,
