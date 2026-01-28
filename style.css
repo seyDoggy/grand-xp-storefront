@@ -12,6 +12,21 @@ body {
     background-color: #f9efd6;
 }
 
+/* Make text white on all pages EXCEPT single posts, archives, and the main blog */
+body:not(.single-post):not(.archive):not(.blog) {
+    color: #ffffff;
+}
+
+/* Same for headings */
+body:not(.single-post):not(.archive):not(.blog) h1,
+body:not(.single-post):not(.archive):not(.blog) h2,
+body:not(.single-post):not(.archive):not(.blog) h3,
+body:not(.single-post):not(.archive):not(.blog) h4,
+body:not(.single-post):not(.archive):not(.blog) h5,
+body:not(.single-post):not(.archive):not(.blog) h6 {
+    color: #ffffff;
+}
+
 a:focus,
 input:focus,
 textarea:focus,

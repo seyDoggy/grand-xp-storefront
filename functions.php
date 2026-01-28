@@ -113,3 +113,50 @@ if ( class_exists( 'WooCommerce' ) ) {
         }
     }
 }
+
+/**
+ * 6. CUSTOM EDITOR STYLES
+ * Forces white text (and dark background) in the Admin Editor
+ * for all pages EXCEPT standard Blog Posts.
+ */
+add_action( 'enqueue_block_editor_assets', 'grand_xp_custom_editor_colors' );
+function grand_xp_custom_editor_colors() {
+    global $post;
+
+    // Return early if no post object is found
+    if ( ! isset( $post ) ) {
+        return;
+    }
+
+    // Only apply if the post type is NOT 'post' (i.e., applies to Pages, Products, etc.)
+    if ( 'post' !== $post->post_type ) {
+        
+        $custom_editor_css = '
+            /* Set Main Text Color to White */
+            .editor-styles-wrapper, 
+            .editor-styles-wrapper p, 
+            .editor-styles-wrapper li {
+                color: #ffffff !important;
+            }
+
+            /* Set Headings to White */
+            .editor-styles-wrapper h1, 
+            .editor-styles-wrapper h2, 
+            .editor-styles-wrapper h3, 
+            .editor-styles-wrapper h4, 
+            .editor-styles-wrapper h5, 
+            .editor-styles-wrapper h6 {
+                color: #ffffff !important;
+            }
+
+            /* OPTIONAL: Set Editor Background to Dark 
+               (Essential so you can read the white text against the background) */
+            .editor-styles-wrapper {
+                background-color: #222222 !important;
+            }
+        ';
+
+        // Inject the styles into the editor
+        wp_add_inline_style( 'wp-block-library', $custom_editor_css );
+    }
+}
