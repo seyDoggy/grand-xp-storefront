@@ -1,10 +1,11 @@
 /* 
 Theme Name: Grand-XP child theme of storefront
-Version: 1.0.30
+Version: 1.0.31
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
 */
+
 /* =========================================
    1. Global & Typography
    ========================================= */
@@ -12,29 +13,42 @@ body {
     background-color: #f9efd6;
 }
 
-/* Make text white on all pages EXCEPT single posts, archives, and the main blog */
-body:not(.single-post):not(.archive):not(.blog) {
+/* -----------------------------------------------------------
+   GLOBAL TEXT COLORS
+   Force White Text on all standard pages.
+   EXCLUDE: 
+   - Single Blog Posts (.single-post)
+   - Category/Archive pages (.archive)
+   - Main Blog Index (.blog)
+   - MailPoet Pages (.mailpoet_page-template-default)
+----------------------------------------------------------- */
+
+/* Body Text */
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) {
     color: #ffffff;
 }
 
-/* Same for headings */
-body:not(.single-post):not(.archive):not(.blog) h1,
-body:not(.single-post):not(.archive):not(.blog) h2,
-body:not(.single-post):not(.archive):not(.blog) h3,
-body:not(.single-post):not(.archive):not(.blog) h4,
-body:not(.single-post):not(.archive):not(.blog) h5,
-body:not(.single-post):not(.archive):not(.blog) h6 {
+/* Headings (H1-H6) */
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h1,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h2,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h3,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h4,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h5,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h6 {
     color: #ffffff;
 }
 
-/* Fix Tables on Pages: Remove white backgrounds and striping */
-body:not(.single-post):not(.archive):not(.blog) .wp-block-table table,
-body:not(.single-post):not(.archive):not(.blog) .wp-block-table tr,
-body:not(.single-post):not(.archive):not(.blog) .wp-block-table th,
-body:not(.single-post):not(.archive):not(.blog) .wp-block-table td {
+/* -----------------------------------------------------------
+   TABLE FIXES
+   Remove default white/gray striping on dark pages so text is visible.
+----------------------------------------------------------- */
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table table,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table tr,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table th,
+body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table td {
     background-color: transparent !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3); /* Optional: adds a subtle white border */
+    border-color: rgba(255, 255, 255, 0.3); /* Subtle white border */
 }
 
 a:focus,
@@ -185,7 +199,58 @@ input[type=submit],
 }
 
 /* =========================================
-   5. Media Queries (Mobile)
+   5. Experience Product Cards
+   ========================================= */
+
+/* The Card Container */
+.experience-cards .wp-block-column {
+    border-radius: 10px;         /* Match your menu corners */
+    padding: 15px !important;               /* Space inside the card */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Soft shadow */
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
+    
+    /* Flexbox to push buttons to the bottom */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Removing the excess gap between the cards */
+.experience-cards .wp-block-column:not(:last-child) {
+    margin-right: 0 !important;
+}
+
+/* Removing the gap under the buttons */
+.experience-cards .wp-block-buttons>.wp-block-button {
+    margin: 0 !important;
+}
+
+/* Hover Effect (The Lift) */
+.experience-cards .wp-block-column:hover {
+    transform: translateY(-5px);  /* Move up slightly */
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12); /* Deeper shadow */
+    border-color: #e65540;        /* Optional: Turn border orange on hover */
+}
+
+/* Make the Text Fill the Space (Pushes button down) */
+.experience-cards .wp-block-column p {
+    flex-grow: 1;
+}
+
+/* Ensure Images fit nicely */
+.experience-cards .wp-block-column figure {
+    margin: -15px !important; /* Pull image to the edges (Full Bleed) */
+    width: calc(100% + 30px);
+}
+
+.experience-cards .wp-block-column img {
+    border-radius: 10px 10px 0 0;   /* Round top corners only */
+    width: 100%;
+    height: 200px;                  /* Force equal height for images */
+    object-fit: cover;              /* Crop image nicely without squishing */
+}
+
+/* =========================================
+   6. Media Queries (Mobile)
    ========================================= */
 @media (max-width: 767px) {
 
