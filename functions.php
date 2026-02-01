@@ -1,10 +1,13 @@
 <?php
 /**
  * Grand Experiences Storefront Child Theme Functions
+ * Updated: Jan 2026 - No Anonymous Functions
  */
 
-// 1. Enqueue Styles
-add_action('wp_enqueue_scripts', 'grand_xp_storefront_enqueue_styles');
+/**
+ * 1. ENQUEUE STYLES
+ */
+add_action( 'wp_enqueue_scripts', 'grand_xp_storefront_enqueue_styles' );
 function grand_xp_storefront_enqueue_styles() {
     wp_enqueue_style( 
         'grand-xp-storefront-style', 
@@ -15,9 +18,11 @@ function grand_xp_storefront_enqueue_styles() {
     );
 }
 
-// 2. Clean Up Storefront Elements (Search, Cart, Credits, Breadcrumbs)
-add_action( 'init', 'clean_up_storefront_actions' );
-function clean_up_storefront_actions() {
+/**
+ * 2. STOREFRONT CLEANUP
+ */
+add_action( 'init', 'grand_xp_clean_up_storefront_actions' );
+function grand_xp_clean_up_storefront_actions() {
     // Remove Search and Cart
     remove_action( 'storefront_header', 'storefront_product_search', 40 );
     remove_action( 'storefront_header', 'storefront_header_cart', 60 );
@@ -26,7 +31,7 @@ function clean_up_storefront_actions() {
     remove_action( 'storefront_footer', 'storefront_credit', 20 );
     remove_action( 'storefront_footer', 'storefront_handheld_footer_bar', 999 );
 
-    // Remove Breadcrumbs (Both Standard and Woo versions)
+    // Remove Breadcrumbs
     remove_action( 'storefront_content_top', 'storefront_breadcrumb', 10 );
     remove_action( 'storefront_content_top', 'woocommerce_breadcrumb', 10 );
 
@@ -34,49 +39,50 @@ function clean_up_storefront_actions() {
     remove_action( 'storefront_page', 'storefront_page_header', 10 );
 }
 
-// 3. Disable "Install WooCommerce" Admin Notice
-add_action( 'wp_loaded', function() {
+/**
+ * 3. ADMIN UI TWEAKS
+ */
+add_action( 'wp_loaded', 'grand_xp_remove_admin_notices' );
+function grand_xp_remove_admin_notices() {
     remove_action( 'admin_notices', 'storefront_is_woocommerce_activated_notice' );
     remove_action( 'admin_notices', 'storefront_welcome_notice' );
-});
+}
 
-// 4. Add "Book Your Adventure" Button to Header (Exclude /find-your-experience/ + children, and /contact-us/)
+/**
+ * 4. HEADER CALL-TO-ACTION (FAREHARBOR)
+ */
 // Helper: Check if the CTA should be shown
-function ge_should_show_header_cta() {
+function grand_xp_should_show_header_cta() {
     global $post;
     
-    // Define the slug of the parent page to exclude along with its children
     $parent_slug = 'find-your-experience';
     $parent_page = get_page_by_path( $parent_slug );
     $parent_id   = $parent_page ? $parent_page->ID : 0;
 
-    // Check exclusion conditions (Add any other excluded pages here)
     $is_excluded = is_page( $parent_slug ) 
                 || ( $parent_id && is_page() && ! empty( $post ) && in_array( $parent_id, get_post_ancestors( $post ) ) )
                 || is_page( 'contact-us' )
-				|| is_page('contest');
+                || is_page( 'contest' );
 
     return ! $is_excluded;
 }
 
-// Add custom class 'has-sticky-cta' to body if conditions are met
-add_filter( 'body_class', 'ge_add_cta_body_class' );
-function ge_add_cta_body_class( $classes ) {
-    if ( ge_should_show_header_cta() ) {
+add_filter( 'body_class', 'grand_xp_add_cta_body_class' );
+function grand_xp_add_cta_body_class( $classes ) {
+    if ( grand_xp_should_show_header_cta() ) {
         $classes[] = 'has-sticky-cta';
     }
     return $classes;
 }
 
-// Add the HTML to the header
-add_action( 'storefront_header', 'add_cta_to_storefront_header', 40 );
-function add_cta_to_storefront_header() {
-    if ( ge_should_show_header_cta() ) {
+add_action( 'storefront_header', 'grand_xp_add_cta_to_storefront_header', 40 );
+function grand_xp_add_cta_to_storefront_header() {
+    if ( grand_xp_should_show_header_cta() ) {
         ?>
         <div class="header-cta-wrapper">
              <a href="https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255" onclick="return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));" 
                class="button header-book-now">
-               Book Your Adventure
+                Book Your Adventure
             </a>
         </div>
         <?php
@@ -84,79 +90,104 @@ function add_cta_to_storefront_header() {
 }
 
 /**
- * 5. WOOCOMMERCE DEPENDENCY WRAPPER
- * All code inside this block only runs if WooCommerce is active.
- * This prevents your site from crashing when you delete the plugin.
+ * 5. WOOCOMMERCE UTILITIES
  */
 if ( class_exists( 'WooCommerce' ) ) {
 
-    add_action('get_header', 'remove_storefront_sidebar');
-    add_action('woocommerce_checkout_process', 'anti_fraud_ip_checker', 10, 0);
-
-    function remove_storefront_sidebar() {
+    add_action( 'get_header', 'grand_xp_remove_storefront_sidebar' );
+    function grand_xp_remove_storefront_sidebar() {
         if ( is_product() || is_product_category()) {
-            remove_action('storefront_sidebar', 'storefront_get_sidebar', 10);
+            remove_action( 'storefront_sidebar', 'storefront_get_sidebar', 10 );
         }
     }
 
-    function anti_fraud_ip_checker() {
+    add_action( 'woocommerce_checkout_process', 'grand_xp_anti_fraud_ip_checker', 10 );
+    function grand_xp_anti_fraud_ip_checker() {
         $customer_ip = WC_Geolocation::get_ip_address();
-        // Check if orders exist before accessing properties
-        $last_1_hour_from_ip_results = wc_get_orders(array(
-            'date_created'        => '>=' . (time() - 3600),
+        
+        $last_1_hour_from_ip_results = wc_get_orders( array(
+            'date_created'        => '>=' . ( time() - 3600 ),
             'customer_ip_address' => $customer_ip,
             'paginate'            => true
-        ));
+        ) );
         
-        if(empty($customer_ip) || (isset($last_1_hour_from_ip_results->total) && $last_1_hour_from_ip_results->total > 10)) { 
-            wc_add_notice('Too many attempts in the last hour. Please return later.', 'error');
+        if( empty( $customer_ip ) || ( isset( $last_1_hour_from_ip_results->total ) && $last_1_hour_from_ip_results->total > 10 ) ) { 
+            wc_add_notice( 'Too many attempts in the last hour. Please return later.', 'error' );
         }
     }
 }
 
 /**
  * 6. CUSTOM EDITOR STYLES
- * Forces white text (and dark background) in the Admin Editor
- * for all pages EXCEPT standard Blog Posts.
  */
 add_action( 'enqueue_block_editor_assets', 'grand_xp_custom_editor_colors' );
 function grand_xp_custom_editor_colors() {
     global $post;
 
-    // Return early if no post object is found
-    if ( ! isset( $post ) ) {
-        return;
-    }
+    if ( ! isset( $post ) ) return;
 
-    // Only apply if the post type is NOT 'post' (i.e., applies to Pages, Products, etc.)
     if ( 'post' !== $post->post_type ) {
-        
         $custom_editor_css = '
-            /* Set Main Text Color to White */
-            .editor-styles-wrapper, 
-            .editor-styles-wrapper p, 
-            .editor-styles-wrapper li {
-                color: #ffffff !important;
-            }
-
-            /* Set Headings to White */
-            .editor-styles-wrapper h1, 
-            .editor-styles-wrapper h2, 
-            .editor-styles-wrapper h3, 
-            .editor-styles-wrapper h4, 
-            .editor-styles-wrapper h5, 
-            .editor-styles-wrapper h6 {
-                color: #ffffff !important;
-            }
-
-            /* OPTIONAL: Set Editor Background to Dark 
-               (Essential so you can read the white text against the background) */
-            .editor-styles-wrapper {
-                background-color: #222222 !important;
-            }
+            .editor-styles-wrapper, .editor-styles-wrapper p, .editor-styles-wrapper li { color: #ffffff !important; }
+            .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, 
+            .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { color: #ffffff !important; }
+            .editor-styles-wrapper { background-color: #222222 !important; }
         ';
-
-        // Inject the styles into the editor
         wp_add_inline_style( 'wp-block-library', $custom_editor_css );
     }
+}
+
+/**
+ * 7. LOCAL BUSINESS SCHEMA (JSON-LD)
+ */
+add_action( 'wp_head', 'grand_xp_output_local_schema', 20 );
+function grand_xp_output_local_schema() {
+    ?>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "SportsActivityLocation",
+          "@id": "https://grand-experiences.com/#organization",
+          "name": "Grand Experiences",
+          "url": "https://grand-experiences.com/",
+          "telephone": "+1-226-240-8315",
+          "email": "info@grand-experiences.com",
+          "address": {
+            "@type": "PostalAddress",
+            "streetAddress": "109 Grand River St N",
+            "addressLocality": "Paris",
+            "addressRegion": "ON",
+            "postalCode": "N3L 2M4",
+            "addressCountry": "CA"
+          },
+          "geo": {
+            "@type": "GeoCoordinates",
+            "latitude": 43.1942, 
+            "longitude": -80.3844
+          },
+          "image": "https://grand-experiences.com/wp-content/uploads/2025/10/paris-to-brant-aerial-william-st-bridge-1-scaled.avif",
+          "priceRange": "$$",
+          "openingHoursSpecification": [
+            {
+              "@type": "OpeningHoursSpecification",
+              "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+              "opens": "09:00",
+              "closes": "17:00"
+            }
+          ],
+          "sameAs": [
+            "https://www.facebook.com/GrandXperiences/",
+            "https://www.instagram.com/grand_experiences",
+            "https://www.youtube.com/@grand_experiences",
+            "https://www.linkedin.com/company/grand-experiences/",
+            "https://x.com/GrandExpCo",
+            "https://www.threads.net/@grand_experiences"
+          ]
+        }
+      ]
+    }
+    </script>
+    <?php
 }
