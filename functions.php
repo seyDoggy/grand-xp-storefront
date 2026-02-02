@@ -1,7 +1,8 @@
 <?php
 /**
  * Grand Experiences Storefront Child Theme Functions
- * Updated: Jan 2026 - No Anonymous Functions
+ * Updated: Feb 2026
+ * Author: Adam Merrifield
  */
 
 /**
@@ -37,6 +38,14 @@ function grand_xp_clean_up_storefront_actions() {
 
     // Remove Page Title & Header
     remove_action( 'storefront_page', 'storefront_page_header', 10 );
+
+    // REMOVED: Date & Author
+    remove_action( 'storefront_post_header_before', 'storefront_post_meta', 10 );
+
+    // REMOVED: Categories & Tags
+    remove_action( 'storefront_post_content_after', 'storefront_post_taxonomy', 10 );
+    remove_action( 'storefront_loop_post', 'storefront_post_taxonomy', 40 );
+    remove_action( 'storefront_single_post', 'storefront_post_taxonomy', 40 );
 }
 
 /**
@@ -190,4 +199,43 @@ function grand_xp_output_local_schema() {
     }
     </script>
     <?php
+}
+
+/**
+ * 8. BLOG EXCERPTS
+ * Swaps Storefront's full content for excerpts on archive pages
+ */
+add_action( 'init', 'grand_xp_enable_excerpts_on_archive' );
+function grand_xp_enable_excerpts_on_archive() {
+    remove_action( 'storefront_loop_post', 'storefront_post_content', 30 );
+    add_action( 'storefront_loop_post', 'grand_xp_custom_loop_content', 30 );
+}
+
+function grand_xp_custom_loop_content() {
+    ?>
+    <div class="entry-content">
+        <?php 
+        the_excerpt(); 
+        ?>
+        <p><a class="button" href="<?php the_permalink(); ?>">Read More</a></p>
+    </div>
+    <?php
+}
+
+/**
+ * 9. REMOVE ARCHIVE PREFIXES
+ * Removes "Category:", "Tag:", etc. from archive titles
+ */
+add_filter( 'get_the_archive_title', 'grand_xp_remove_archive_prefix' );
+function grand_xp_remove_archive_prefix( $title ) {
+    if ( is_category() ) {
+        $title = single_cat_title( '', false );
+    } elseif ( is_tag() ) {
+        $title = single_tag_title( '', false );
+    } elseif ( is_author() ) {
+        $title = '<span class="vcard">' . get_the_author() . '</span>';
+    } elseif ( is_post_type_archive() ) {
+        $title = post_type_archive_title( '', false );
+    }
+    return $title;
 }

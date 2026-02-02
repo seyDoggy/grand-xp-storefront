@@ -1,34 +1,23 @@
-/* 
-Theme Name: Grand-XP child theme of storefront
-Version: 1.0.32
+/* Theme Name: Grand-XP child theme of storefront
+Version: 1.0.33
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
 */
 
 /* =========================================
-   1. Global & Typography
+   1. GLOBAL & TYPOGRAPHY
    ========================================= */
 body {
     background-color: #f9efd6;
 }
 
-/* -----------------------------------------------------------
-   GLOBAL TEXT COLORS
-   Force White Text on all standard pages.
-   EXCLUDE: 
-   - Single Blog Posts (.single-post)
-   - Category/Archive pages (.archive)
-   - Main Blog Index (.blog)
-   - MailPoet Pages (.mailpoet_page-template-default)
------------------------------------------------------------ */
-
-/* Body Text */
+/* Force White Text on standard pages (Excluding Blog/Archives) */
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) {
     color: #ffffff;
 }
 
-/* Headings (H1-H6) */
+/* Headings (H1-H6) on standard pages */
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h1,
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h2,
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h3,
@@ -38,60 +27,31 @@ body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-defa
     color: #ffffff;
 }
 
-/* -----------------------------------------------------------
-   TABLE FIXES
-   Remove default white/gray striping on dark pages so text is visible.
------------------------------------------------------------ */
+/* Remove focus outlines & text decoration */
+a:focus, input:focus, textarea:focus, button:focus { outline: none; }
+.hentry .entry-content a, .site-footer a { text-decoration: none; }
+.edit-link { display: none; }
+
+/* Table Fixes: Remove default striping on dark pages */
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table table,
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table tr,
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table th,
 body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table td {
     background-color: transparent !important;
     color: #ffffff !important;
-    border-color: rgba(255, 255, 255, 0.3); /* Subtle white border */
-}
-
-a:focus,
-input:focus,
-textarea:focus,
-button:focus {
-    outline: none;
-}
-
-.hentry .entry-content a,
-.site-footer a {
-    text-decoration: none;
-}
-
-.edit-link {
-    display: none;
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 /* =========================================
-   2. Layout & Structure
+   2. LAYOUT & STRUCTURE
    ========================================= */
-#masthead, .no-wc-breadcrumb .site-header {
-    margin-bottom: 0;
-}
+#masthead, .no-wc-breadcrumb .site-header { margin-bottom: 0; }
+.content-area, .site-main, .hentry { margin-bottom: 0; }
+.site-header .site-branding { width: 50%; }
+.site-header .site-branding > a > img { max-width: 300px; }
 
-.content-area,
-.site-main,
-.hentry {
-    margin-bottom: 0;
-}
-
-.site-header .site-branding {
-    width: 50%;
-}
-
-.site-header .site-branding > a > img {
-	max-width: 300px;
-}
-
-/* GE Product page group styling overrides */
-:where(.ge-product-header.wp-block-group.has-background) {
-    padding: 0 ! important;
-}
+/* GE Product page styling overrides */
+:where(.ge-product-header.wp-block-group.has-background) { padding: 0 !important; }
 
 /* Storefront Sidebar Overrides */
 .tax-product_cat.right-sidebar .content-area,
@@ -104,17 +64,13 @@ button:focus {
 }
 
 /* =========================================
-   3. Buttons & Forms
+   3. BUTTONS & FORMS
    ========================================= */
 .hentry .entry-content .wp-block-button .wp-block-button__link,
 .editor-styles-wrapper .wp-block-button .wp-block-button__link,
-input[type=button],
-input[type=reset],
-input[type=submit],
-.button,
+input[type=button], input[type=reset], input[type=submit], .button,
 .wc-block-grid__products .wc-block-grid__product .wp-block-button__link,
-.added_to_cart,
-.woocommerce-product-search .search-field {
+.added_to_cart, .woocommerce-product-search .search-field {
     border-radius: 100px;
 }
 
@@ -126,14 +82,43 @@ input[type=submit],
     border: 0;
 }
 
-/* Make the first menu item (Book Now) stand out */
+/* =========================================
+   4. NAVIGATION & MENUS
+   ========================================= */
+/* Make "Book Now" stand out */
 .main-navigation ul.menu > li:first-child > a {
     text-transform: uppercase;
-	font-weight: bold;
+    font-weight: bold;
+}
+
+/* Dropdown Animation - Desktop Only */
+@media (min-width: 768px) {
+    .main-navigation ul li { position: relative; }
+    .main-navigation ul ul {
+        display: block !important;
+        position: absolute;
+        left: 0 !important;
+        top: 100%;
+        width: 220px;
+        box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        border-radius: 0 0 10px 10px;
+        overflow: hidden;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(20px);
+        transition: all 0.3s ease-in-out;
+        z-index: 999;
+    }
+    .main-navigation ul li:hover > ul,
+    .main-navigation ul li:focus-within > ul {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
 }
 
 /* =========================================
-   4. Custom Header CTA (Book Now)
+   5. HEADER CTA (BOOK NOW BUTTON)
    ========================================= */
 .header-cta-wrapper {
     float: right;
@@ -157,106 +142,106 @@ input[type=submit],
     color: #fff !important;
 }
 
-/* Dropdown Animation & Styling - Desktop Only */
+/* =========================================
+   6. BLOG & ARCHIVE STYLING
+   ========================================= */
+
+/* Hide Featured Images Everywhere */
+.blog .type-post .wp-post-image,
+.archive .type-post .wp-post-image,
+article > div > img.wp-post-image {
+    display: none !important;
+}
+
+/* White Card Style for Posts */
+article.post {
+    background-color: #ffffff !important;
+    padding: 0 20px; /* Sides only, as requested */
+    border: 1px solid #e8e8e8;
+    border-radius: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* Add Top Padding to Title */
+article.post .entry-title {
+    padding-top: 20px;
+    margin-top: 0;
+}
+
+/* Add Bottom Padding to Navigation (Single Posts) */
+.post-navigation {
+    padding-bottom: 20px;
+}
+
+/* Fix Bottom Padding for Grid Cards 
+   (Since grid cards don't have navigation, we pad the content area so the button doesn't hit the edge) */
+.blog article.post .entry-content,
+.archive article.post .entry-content {
+    padding-bottom: 20px;
+    margin-bottom: 0;
+}
+
+/* Grid Layout (Desktop) */
 @media (min-width: 768px) {
-
-    /* 1. Ensure the parent menu item is the anchor point */
-    .main-navigation ul li {
-        position: relative;
+    .blog .site-main,
+    .archive .site-main {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 30px;
     }
-
-    /* 2. Set the starting state of the dropdown */
-    .main-navigation ul ul {
-        display: block !important;       /* Force it to 'exist' */
-        
-        /* Positioning & Size */
-        position: absolute;
-        left: 0 !important;              /* Override theme's off-screen hiding */
-        top: 100%;                       /* Position directly below parent */
-        width: 220px;                    /* Slightly wider for better readability */
-        box-shadow: 0 5px 15px rgba(0,0,0,0.1); /* Add depth */
-        
-        /* ROUNDED BOTTOM CORNERS */
-        /* Top-left, Top-right, Bottom-right, Bottom-left */
-        border-radius: 0 0 10px 10px;
-        overflow: hidden;                /* Ensures content doesn't bleed past the rounded corners */
-
-        /* Animation Start State */
-        opacity: 0;                      /* Transparent */
-        visibility: hidden;              /* Not clickable */
-        transform: translateY(20px);     /* Start 20px lower */
-        transition: all 0.3s ease-in-out; /* Smooth transition */
-        z-index: 999;                    /* Ensure it's on top of content */
-    }
-
-    /* 3. Set the end state on Hover */
-    .main-navigation ul li:hover > ul,
-    .main-navigation ul li:focus-within > ul {
-        opacity: 1;                      /* Fully visible */
-        visibility: visible;             /* Clickable */
-        transform: translateY(0);        /* Slide up into place */
+    /* Full Width Elements */
+    .blog .site-main .page-header,
+    .archive .site-main .page-header,
+    .blog .site-main .storefront-pagination,
+    .archive .site-main .storefront-pagination {
+        grid-column: 1 / -1;
     }
 }
 
 /* =========================================
-   5. Experience Product Cards
+   7. EXPERIENCE PRODUCT CARDS
    ========================================= */
-
-/* The Card Container */
 .experience-cards .wp-block-column {
-    border-radius: 10px;         /* Match your menu corners */
-    padding: 15px !important;               /* Space inside the card */
-    box-shadow: 0 4px 6px rgba(0,0,0,0.05); /* Soft shadow */
-    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth animation */
-    
-    /* Flexbox to push buttons to the bottom */
+    border-radius: 10px;
+    padding: 15px !important;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
     display: flex;
     flex-direction: column;
 }
 
-/* Removing the excess gap between the cards */
-.experience-cards .wp-block-column:not(:last-child) {
-    margin-right: 0 !important;
-}
+.experience-cards .wp-block-column:not(:last-child) { margin-right: 0 !important; }
+.experience-cards .wp-block-buttons>.wp-block-button { margin: 0 !important; }
 
-/* Removing the gap under the buttons */
-.experience-cards .wp-block-buttons>.wp-block-button {
-    margin: 0 !important;
-}
-
-/* Hover Effect (The Lift) */
+/* Hover Effects */
 .experience-cards .wp-block-column:hover {
-    transform: translateY(-5px);  /* Move up slightly */
-    box-shadow: 0 12px 24px rgba(0,0,0,0.12); /* Deeper shadow */
-    border-color: #e65540;        /* Optional: Turn border orange on hover */
+    transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0,0,0,0.12);
+    border-color: #e65540;
 }
 
-/* Make the Text Fill the Space (Pushes button down) */
-.experience-cards .wp-block-column p {
-    flex-grow: 1;
-}
+.experience-cards .wp-block-column p { flex-grow: 1; }
 
-/* Ensure Images fit nicely */
+/* Image Styling */
 .experience-cards .wp-block-column figure {
-    margin: -15px !important; /* Pull image to the edges (Full Bleed) */
+    margin: -15px !important;
     width: calc(100% + 30px);
 }
-
 .experience-cards .wp-block-column img {
-    border-radius: 10px 10px 0 0;   /* Round top corners only */
+    border-radius: 10px 10px 0 0;
     width: 100%;
-    height: 200px;                  /* Force equal height for images */
-    object-fit: cover;              /* Crop image nicely without squishing */
+    height: 200px;
+    object-fit: cover;
 }
 
 /* =========================================
-   6. Media Queries (Mobile)
+   8. MOBILE TWEAKS
    ========================================= */
 @media (max-width: 767px) {
-
-    /* Mobile Menu Toggle */
-    button.menu-toggle,
-    button.menu-toggle:hover {
+    /* Menu Toggle Fix */
+    button.menu-toggle, button.menu-toggle:hover {
         border: none;
         padding-left: 0;
         position: absolute;
@@ -264,7 +249,6 @@ input[type=submit],
         height: auto;
         right: 2em;
     }
-
     button.menu-toggle::before,
     button.menu-toggle::after,
     button.menu-toggle span::before {
@@ -274,8 +258,7 @@ input[type=submit],
 }
 
 @media (max-width: 768px) {
-
-    /* Header CTA - Fixed Bottom Bar */
+    /* Sticky Footer CTA */
     .header-cta-wrapper {
         position: fixed !important;
         bottom: 0;
@@ -289,7 +272,6 @@ input[type=submit],
         float: none;
         width: 100%;
     }
-
     .header-book-now {
         display: block !important;
         width: 100%;
@@ -297,9 +279,5 @@ input[type=submit],
         margin-top: 0;
         font-size: 16px;
     }
-
-    /* Prevent footer overlap - ONLY when CTA is present */
-    body.has-sticky-cta {
-        padding-bottom: 70px;
-    }
+    body.has-sticky-cta { padding-bottom: 70px; }
 }
