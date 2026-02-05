@@ -59,10 +59,37 @@ function grand_xp_remove_admin_notices() {
 
 /**
  * 4. HEADER CALL-TO-ACTION (FAREHARBOR)
+ * Logic: Checks specific Custom Fields (fh_item_id, fh_flow_id, fh_cta_text) to customize the button.
  */
+
+// Helper: Get the current ID safely (works for Pages, Posts, and Categories)
+function grand_xp_get_current_id() {
+    $id = get_queried_object_id();
+    if ( empty( $id ) ) {
+        global $post;
+        if ( isset( $post ) && isset( $post->ID ) ) {
+            $id = $post->ID;
+        }
+    }
+    return $id;
+}
+
 // Helper: Check if the CTA should be shown
 function grand_xp_should_show_header_cta() {
-    global $post;
+    $current_id = grand_xp_get_current_id();
+    
+    // 1. CHECK OVERRIDES: If specific Custom Fields exist, ALWAYS show the CTA
+    if ( $current_id ) {
+        $item_id = get_post_meta( $current_id, 'fh_item_id', true );
+        $flow_id = get_post_meta( $current_id, 'fh_flow_id', true );
+        
+        if ( ! empty( $item_id ) || ! empty( $flow_id ) ) {
+            return true;
+        }
+    }
+    
+    // 2. CHECK EXCLUSIONS: Standard logic
+    global $post; 
     
     $parent_slug = 'find-your-experience';
     $parent_page = get_page_by_path( $parent_slug );
@@ -76,6 +103,7 @@ function grand_xp_should_show_header_cta() {
     return ! $is_excluded;
 }
 
+// Add 'has-sticky-cta' class to body for CSS styling
 add_filter( 'body_class', 'grand_xp_add_cta_body_class' );
 function grand_xp_add_cta_body_class( $classes ) {
     if ( grand_xp_should_show_header_cta() ) {
@@ -84,18 +112,48 @@ function grand_xp_add_cta_body_class( $classes ) {
     return $classes;
 }
 
+// Output the Button
 add_action( 'storefront_header', 'grand_xp_add_cta_to_storefront_header', 40 );
 function grand_xp_add_cta_to_storefront_header() {
-    if ( grand_xp_should_show_header_cta() ) {
-        ?>
-        <div class="header-cta-wrapper">
-             <a href="https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255" onclick="return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));" 
-               class="button header-book-now">
-                Book Your Adventure
-            </a>
-        </div>
-        <?php
+    if ( ! grand_xp_should_show_header_cta() ) {
+        return; 
     }
+
+    // 1. Get Custom Fields
+    $current_id  = grand_xp_get_current_id();
+    $item_id     = $current_id ? get_post_meta( $current_id, 'fh_item_id', true ) : '';
+    $flow_id     = $current_id ? get_post_meta( $current_id, 'fh_flow_id', true ) : '';
+    $custom_text = $current_id ? get_post_meta( $current_id, 'fh_cta_text', true ) : '';
+
+    // --- DEFAULTS ---
+    $cta_text = 'Book Your Adventure';
+    $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255'; 
+    $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));";
+
+    // --- SCENARIO A: Specific Item ID ---
+    if ( ! empty( $item_id ) ) {
+        $cta_text = 'Book This Trip';
+        $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/items/' . esc_attr( $item_id ) . '/?full-items=yes';
+        $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', view: { item: " . esc_js( $item_id ) . " } }));";
+    
+    // --- SCENARIO B: Specific Flow ID ---
+    } elseif ( ! empty( $flow_id ) ) {
+        $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=' . esc_attr( $flow_id );
+        $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: " . esc_js( $flow_id ) . ", view: 'items' }));";
+    }
+
+    // --- TEXT OVERRIDE: Check if user defined a custom button label ---
+    if ( ! empty( $custom_text ) ) {
+        $cta_text = $custom_text;
+    }
+
+    ?>
+    <div class="header-cta-wrapper">
+            <a href="<?php echo $fh_url; ?>" onclick="<?php echo $fh_click; ?>" class="button header-book-now">
+            <?php echo esc_html( $cta_text ); ?>
+        </a>
+    </div>
+    <?php
 }
 
 /**
