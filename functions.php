@@ -544,3 +544,26 @@ function grand_xp_load_font_awesome_editor() {
     ';
     wp_add_inline_style( 'font-awesome-6', $editor_fixes );
 }
+
+/**
+ * 14. FONT AWESOME SHORTCODE
+ * Usage: [fa i="gift"] or [fa i="facebook" s="brands"]
+ * Works in Headings, Paragraphs, and Buttons.
+ */
+add_shortcode( 'fa', 'grand_xp_fa_shortcode' );
+function grand_xp_fa_shortcode( $atts ) {
+    $atts = shortcode_atts( array(
+        'i' => '',       // Icon name (e.g. 'canoe', 'gift')
+        's' => 'solid',  // Style: 'solid' (default), 'regular', 'brands'
+    ), $atts );
+
+    if ( empty( $atts['i'] ) ) return '';
+
+    // Handle Styles
+    $prefix = 'fa-solid'; // Default to Solid
+    if ( $atts['s'] === 'regular' ) $prefix = 'fa-regular';
+    if ( $atts['s'] === 'brands' )  $prefix = 'fa-brands';
+
+    // Output the icon
+    return '<i class="' . esc_attr( $prefix ) . ' fa-' . esc_attr( $atts['i'] ) . '"></i>';
+}
