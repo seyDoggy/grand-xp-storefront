@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.35
+Version: 1.0.36
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -43,6 +43,7 @@ body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-defa
 }
 
 /* Restrict Font Awesome SVG icons inside headings */
+p svg.svg-inline--fa,
 h1 svg.svg-inline--fa,
 h2 svg.svg-inline--fa,
 h3 svg.svg-inline--fa,
