@@ -546,7 +546,7 @@ function grand_xp_load_font_awesome_editor() {
 }
 
 /**
- * 14. FONT AWESOME SHORTCODE
+ * 13. FONT AWESOME SHORTCODE
  * Usage: [fa i="gift"] or [fa i="facebook" s="brands"]
  * Works in Headings, Paragraphs, and Buttons.
  */
@@ -566,4 +566,97 @@ function grand_xp_fa_shortcode( $atts ) {
 
     // Output the icon
     return '<i class="' . esc_attr( $prefix ) . ' fa-' . esc_attr( $atts['i'] ) . '"></i>';
+}
+
+/**
+ * 14. FAREHARBOR SHIM (Performance Edition)
+ * 1. Lazy Loads the API script (Only on mouse/scroll/touch).
+ * 2. Keeps old [fareharbor] and [lightframe] shortcodes working.
+ */
+add_action( 'wp_footer', 'grand_xp_lazy_load_fh_api' ); // Moved to Footer
+function grand_xp_lazy_load_fh_api() {
+    ?>
+    <script>
+    (function() {
+        var fhLoaded = false;
+        var loadFH = function() {
+            if (fhLoaded) return;
+            fhLoaded = true;
+            var script = document.createElement('script');
+            script.src = 'https://fareharbor.com/embeds/api/v1/?autolightframe=yes';
+            script.async = true;
+            document.body.appendChild(script);
+            
+            // Clean up listeners so they don't fire again
+            window.removeEventListener('scroll', loadFH);
+            window.removeEventListener('mousemove', loadFH);
+            window.removeEventListener('touchstart', loadFH);
+            window.removeEventListener('keydown', loadFH);
+        };
+
+        // Wait for ANY user interaction to load the heavy script
+        window.addEventListener('scroll', loadFH, {passive: true, once: true});
+        window.addEventListener('mousemove', loadFH, {passive: true, once: true});
+        window.addEventListener('touchstart', loadFH, {passive: true, once: true});
+        window.addEventListener('keydown', loadFH, {passive: true, once: true});
+    })();
+    </script>
+    <?php
+}
+
+add_shortcode( 'fareharbor', 'grand_xp_fh_shortcode_shim' );
+add_shortcode( 'lightframe', 'grand_xp_fh_shortcode_shim' );
+
+function grand_xp_fh_shortcode_shim( $atts, $content = 'Book Now' ) {
+    // 1. Allow all the attributes your shortcodes actually use
+    $atts = shortcode_atts( array(
+        'shortname'  => 'grand-experiences',
+        'item'       => '',
+        'view_item'  => '', // Compatibility for 'view_item'
+        'flow'       => '',
+        'full_items' => 'no',
+        'fallback'   => 'simple',
+        'class'      => 'button', // Default if no class provided
+    ), $atts );
+
+    // 2. Map 'view_item' to 'item' (Prioritize Item ID if both exist)
+    $item_id = $atts['item'];
+    if ( empty( $item_id ) && ! empty( $atts['view_item'] ) ) {
+        $item_id = $atts['view_item'];
+    }
+
+    // 3. Build the Base URL
+    $url = 'https://fareharbor.com/embeds/book/' . esc_attr( $atts['shortname'] ) . '/';
+    
+    // 4. Start the JS Config Object
+    $js_config = "shortname: '" . esc_js( $atts['shortname'] ) . "'";
+    
+    // 5. Handle Items vs Flows logic
+    if ( ! empty( $item_id ) ) {
+        // Link to specific Item
+        $url .= 'items/' . esc_attr( $item_id ) . '/';
+        $js_config .= ", view: { item: " . esc_js( $item_id ) . " }";
+    } elseif ( ! empty( $atts['flow'] ) ) {
+        // Link to Flow
+        $url .= '?flow=' . esc_attr( $atts['flow'] );
+        $js_config .= ", flow: " . esc_js( $atts['flow'] ) . ", view: 'items'";
+    } else {
+        // Fallback to all items
+        $js_config .= ", view: 'items'";
+    }
+
+    // 6. Handle 'full_items' parameter
+    if ( $atts['full_items'] === 'yes' ) {
+        $url = add_query_arg( 'full-items', 'yes', $url );
+        $js_config .= ", fullItems: 'yes'";
+    }
+
+    // 7. Add Fallback
+    $js_config .= ", fallback: '" . esc_js( $atts['fallback'] ) . "'";
+
+    // 8. Construct the final OnClick
+    $onclick = "return !(window.FH && FH.open({ " . $js_config . " }));";
+
+    // 9. Output
+    return '<a href="' . esc_url( $url ) . '" onclick="' . $onclick . '" class="' . esc_attr( $atts['class'] ) . '">' . do_shortcode( $content ) . '</a>';
 }
