@@ -42,6 +42,19 @@ body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-defa
     border-color: rgba(255, 255, 255, 0.3);
 }
 
+/* Restrict Font Awesome SVG icons inside headings */
+h1 svg.svg-inline--fa,
+h2 svg.svg-inline--fa,
+h3 svg.svg-inline--fa,
+h4 svg.svg-inline--fa,
+h5 svg.svg-inline--fa,
+h6 svg.svg-inline--fa {
+    height: 1em; /* Matches the text height */
+    width: auto; /* Maintains aspect ratio */
+    vertical-align: -0.125em; /* Aligns visually with text baseline */
+    display: inline-block;
+}
+
 /* =========================================
    2. LAYOUT & STRUCTURE
    ========================================= */
