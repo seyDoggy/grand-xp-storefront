@@ -302,3 +302,129 @@ function grand_xp_remove_archive_prefix( $title ) {
     }
     return $title;
 }
+
+/**
+ * -------------------------------------------------------------------------
+ * SCALABLE QUICK & BULK EDIT FOR CUSTOM FIELDS
+ * -------------------------------------------------------------------------
+ */
+
+// 1. DEFINE YOUR FIELDS
+function grand_xp_get_quick_edit_fields() {
+    return array(
+        'ge_show_title' => 'Show Title',
+        'fh_item_id'    => 'FH Item ID',
+        'fh_flow_id'    => 'FH Flow ID',
+        'fh_cta_text'   => 'FH Button Text',
+    );
+}
+
+// 2. ADD COLUMNS
+add_filter( 'manage_page_posts_columns', 'grand_xp_add_columns' );
+add_filter( 'manage_posts_columns', 'grand_xp_add_columns' );
+function grand_xp_add_columns( $columns ) {
+    $fields = grand_xp_get_quick_edit_fields();
+    foreach ( $fields as $key => $label ) {
+        $columns[ $key ] = $label;
+    }
+    return $columns;
+}
+
+// 3. POPULATE COLUMNS (Hidden data for Quick Edit JS)
+add_action( 'manage_pages_custom_column', 'grand_xp_render_column_content', 10, 2 );
+add_action( 'manage_posts_custom_column', 'grand_xp_render_column_content', 10, 2 );
+function grand_xp_render_column_content( $column_name, $post_id ) {
+    $fields = grand_xp_get_quick_edit_fields();
+    if ( array_key_exists( $column_name, $fields ) ) {
+        $value = get_post_meta( $post_id, $column_name, true );
+        // Display value for admin + Hidden div for JS to grab
+        echo '<span class="ge-admin-view">' . esc_html( $value ) . '</span>';
+        echo '<div class="ge-hidden-value" data-field="' . esc_attr( $column_name ) . '" style="display:none;">' . esc_html( $value ) . '</div>';
+    }
+}
+
+// 4. ADD INPUTS TO QUICK EDIT AND BULK EDIT
+add_action( 'quick_edit_custom_box', 'grand_xp_add_quick_edit_inputs', 10, 2 );
+add_action( 'bulk_edit_custom_box', 'grand_xp_add_quick_edit_inputs', 10, 2 ); // <--- ADDED THIS HOOK
+function grand_xp_add_quick_edit_inputs( $column_name, $post_type ) {
+    $fields = grand_xp_get_quick_edit_fields();
+    if ( array_key_exists( $column_name, $fields ) ) {
+        ?>
+        <fieldset class="inline-edit-col-right">
+            <div class="inline-edit-col">
+                <label>
+                    <span class="title"><?php echo esc_html( $fields[$column_name] ); ?></span>
+                    <span class="input-text-wrap">
+                        <input type="text" name="<?php echo esc_attr( $column_name ); ?>" class="ge-input-<?php echo esc_attr( $column_name ); ?>" value="">
+                    </span>
+                </label>
+            </div>
+        </fieldset>
+        <?php
+    }
+}
+
+// 5. JAVASCRIPT (Populates Quick Edit only; Bulk Edit stays blank)
+add_action( 'admin_footer', 'grand_xp_quick_edit_script' );
+function grand_xp_quick_edit_script() {
+    $screen = get_current_screen();
+    if ( $screen->base != 'edit' ) return;
+    ?>
+    <script type="text/javascript">
+    jQuery(document).ready(function($) {
+        var $wp_inline_edit = inlineEditPost.edit;
+        
+        inlineEditPost.edit = function( id ) {
+            $wp_inline_edit.apply( this, arguments );
+
+            var post_id = 0;
+            if ( typeof( id ) == 'object' ) {
+                post_id = parseInt( this.getId( id ) );
+            }
+
+            if ( post_id > 0 ) {
+                var $row = $( '#post-' + post_id );
+                var $edit_row = $( '#edit-' + post_id );
+                
+                // Populate Quick Edit inputs from the hidden column data
+                $row.find( '.ge-hidden-value' ).each(function() {
+                    var field_name = $(this).data('field');
+                    var value = $(this).text();
+                    $edit_row.find( 'input[name="' + field_name + '"]' ).val( value );
+                });
+            }
+        };
+    });
+    </script>
+    <?php
+}
+
+// 6. SMART SAVE (Handles both Quick & Bulk)
+add_action( 'save_post', 'grand_xp_save_quick_edit' );
+function grand_xp_save_quick_edit( $post_id ) {
+    if ( defined( 'DOING_AUTOSAVE' ) && DOING_AUTOSAVE ) return;
+    if ( ! current_user_can( 'edit_post', $post_id ) ) return;
+    
+    $fields = grand_xp_get_quick_edit_fields();
+    
+    // Determine context: Quick Edit ('inline-save') or Bulk/Other
+    $action = isset( $_REQUEST['action'] ) ? $_REQUEST['action'] : '';
+
+    foreach ( $fields as $key => $label ) {
+        if ( isset( $_REQUEST[ $key ] ) ) {
+            $value = sanitize_text_field( $_REQUEST[ $key ] );
+            
+            // LOGIC GATE:
+            // 1. If Quick Edit ('inline-save') -> Save everything (allow wiping data).
+            // 2. If Standard Edit ('editpost') -> Save everything.
+            // 3. If Bulk Edit (anything else) -> Only save if User typed something (!empty).
+            
+            if ( $action === 'inline-save' || $action === 'editpost' ) {
+                update_post_meta( $post_id, $key, $value );
+            } elseif ( ! empty( $value ) ) {
+                // Bulk Edit safety: Only update if the user actually typed a value
+                update_post_meta( $post_id, $key, $value );
+            }
+        }
+    }
+}
