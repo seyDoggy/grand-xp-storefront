@@ -20,7 +20,8 @@ function grand_xp_storefront_enqueue_styles() {
 }
 
 /**
- * 2. STOREFRONT CLEANUP
+ * 2. STOREFRONT GENERAL CLEANUP
+ * Note: We removed the "Page Title" removal from here so we can do it smarter in Section 2b.
  */
 add_action( 'init', 'grand_xp_clean_up_storefront_actions' );
 function grand_xp_clean_up_storefront_actions() {
@@ -36,16 +37,39 @@ function grand_xp_clean_up_storefront_actions() {
     remove_action( 'storefront_content_top', 'storefront_breadcrumb', 10 );
     remove_action( 'storefront_content_top', 'woocommerce_breadcrumb', 10 );
 
-    // Remove Page Title & Header
-    remove_action( 'storefront_page', 'storefront_page_header', 10 );
-
-    // REMOVED: Date & Author
+    // REMOVE: Date & Author from Blog Posts
     remove_action( 'storefront_post_header_before', 'storefront_post_meta', 10 );
 
-    // REMOVED: Categories & Tags
+    // REMOVE: Categories & Tags from Blog Posts
     remove_action( 'storefront_post_content_after', 'storefront_post_taxonomy', 10 );
     remove_action( 'storefront_loop_post', 'storefront_post_taxonomy', 40 );
     remove_action( 'storefront_single_post', 'storefront_post_taxonomy', 40 );
+}
+
+/**
+ * 2b. SMART TITLE LOGIC (Universal Fix)
+ * Hook: get_header
+ * Logic: Hides titles on BOTH Pages and Single Posts by default.
+ * Exception: Shows title only if Custom Field 'ge_show_title' is set to '1'.
+ */
+add_action( 'get_header', 'grand_xp_smart_remove_page_titles' );
+function grand_xp_smart_remove_page_titles() {
+    // Only run on singular content (Pages AND Blog Posts)
+    if ( is_singular() ) {
+        global $post;
+        
+        // Check for the override Custom Field
+        $show_title = get_post_meta( $post->ID, 'ge_show_title', true );
+        
+        // If the Custom Field is EMPTY, remove the titles.
+        if ( empty( $show_title ) ) {
+            // 1. Remove Title from Standard Pages
+            remove_action( 'storefront_page', 'storefront_page_header', 10 );
+            
+            // 2. Remove Title from Blog Posts (The missing piece!)
+            remove_action( 'storefront_single_post', 'storefront_post_header', 10 );
+        }
+    }
 }
 
 /**
@@ -59,10 +83,8 @@ function grand_xp_remove_admin_notices() {
 
 /**
  * 4. HEADER CALL-TO-ACTION (FAREHARBOR)
- * Logic: Checks specific Custom Fields (fh_item_id, fh_flow_id, fh_cta_text) to customize the button.
  */
-
-// Helper: Get the current ID safely (works for Pages, Posts, and Categories)
+// Helper: Get the current ID safely
 function grand_xp_get_current_id() {
     $id = get_queried_object_id();
     if ( empty( $id ) ) {
@@ -78,19 +100,17 @@ function grand_xp_get_current_id() {
 function grand_xp_should_show_header_cta() {
     $current_id = grand_xp_get_current_id();
     
-    // 1. CHECK OVERRIDES: If specific Custom Fields exist, ALWAYS show the CTA
+    // 1. CHECK OVERRIDES
     if ( $current_id ) {
         $item_id = get_post_meta( $current_id, 'fh_item_id', true );
         $flow_id = get_post_meta( $current_id, 'fh_flow_id', true );
-        
         if ( ! empty( $item_id ) || ! empty( $flow_id ) ) {
             return true;
         }
     }
     
-    // 2. CHECK EXCLUSIONS: Standard logic
+    // 2. CHECK EXCLUSIONS
     global $post; 
-    
     $parent_slug = 'find-your-experience';
     $parent_page = get_page_by_path( $parent_slug );
     $parent_id   = $parent_page ? $parent_page->ID : 0;
@@ -103,7 +123,7 @@ function grand_xp_should_show_header_cta() {
     return ! $is_excluded;
 }
 
-// Add 'has-sticky-cta' class to body for CSS styling
+// Add 'has-sticky-cta' class to body
 add_filter( 'body_class', 'grand_xp_add_cta_body_class' );
 function grand_xp_add_cta_body_class( $classes ) {
     if ( grand_xp_should_show_header_cta() ) {
@@ -119,30 +139,24 @@ function grand_xp_add_cta_to_storefront_header() {
         return; 
     }
 
-    // 1. Get Custom Fields
     $current_id  = grand_xp_get_current_id();
     $item_id     = $current_id ? get_post_meta( $current_id, 'fh_item_id', true ) : '';
     $flow_id     = $current_id ? get_post_meta( $current_id, 'fh_flow_id', true ) : '';
     $custom_text = $current_id ? get_post_meta( $current_id, 'fh_cta_text', true ) : '';
 
-    // --- DEFAULTS ---
     $cta_text = 'Book Your Adventure';
     $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=1495255'; 
     $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: 1495255, view: 'items' }));";
 
-    // --- SCENARIO A: Specific Item ID ---
     if ( ! empty( $item_id ) ) {
         $cta_text = 'Book This Trip';
         $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/items/' . esc_attr( $item_id ) . '/?full-items=yes';
         $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', view: { item: " . esc_js( $item_id ) . " } }));";
-    
-    // --- SCENARIO B: Specific Flow ID ---
     } elseif ( ! empty( $flow_id ) ) {
         $fh_url   = 'https://fareharbor.com/embeds/book/grand-experiences/?full-items=yes&flow=' . esc_attr( $flow_id );
         $fh_click = "return !(window.FH && FH.open({ shortname: 'grand-experiences', fallback: 'simple', fullItems: 'yes', flow: " . esc_js( $flow_id ) . ", view: 'items' }));";
     }
 
-    // --- TEXT OVERRIDE: Check if user defined a custom button label ---
     if ( ! empty( $custom_text ) ) {
         $cta_text = $custom_text;
     }
@@ -160,7 +174,6 @@ function grand_xp_add_cta_to_storefront_header() {
  * 5. WOOCOMMERCE UTILITIES
  */
 if ( class_exists( 'WooCommerce' ) ) {
-
     add_action( 'get_header', 'grand_xp_remove_storefront_sidebar' );
     function grand_xp_remove_storefront_sidebar() {
         if ( is_product() || is_product_category()) {
@@ -171,13 +184,11 @@ if ( class_exists( 'WooCommerce' ) ) {
     add_action( 'woocommerce_checkout_process', 'grand_xp_anti_fraud_ip_checker', 10 );
     function grand_xp_anti_fraud_ip_checker() {
         $customer_ip = WC_Geolocation::get_ip_address();
-        
         $last_1_hour_from_ip_results = wc_get_orders( array(
             'date_created'        => '>=' . ( time() - 3600 ),
             'customer_ip_address' => $customer_ip,
             'paginate'            => true
         ) );
-        
         if( empty( $customer_ip ) || ( isset( $last_1_hour_from_ip_results->total ) && $last_1_hour_from_ip_results->total > 10 ) ) { 
             wc_add_notice( 'Too many attempts in the last hour. Please return later.', 'error' );
         }
@@ -190,9 +201,7 @@ if ( class_exists( 'WooCommerce' ) ) {
 add_action( 'enqueue_block_editor_assets', 'grand_xp_custom_editor_colors' );
 function grand_xp_custom_editor_colors() {
     global $post;
-
     if ( ! isset( $post ) ) return;
-
     if ( 'post' !== $post->post_type ) {
         $custom_editor_css = '
             .editor-styles-wrapper, .editor-styles-wrapper p, .editor-styles-wrapper li { color: #ffffff !important; }
@@ -261,7 +270,6 @@ function grand_xp_output_local_schema() {
 
 /**
  * 8. BLOG EXCERPTS
- * Swaps Storefront's full content for excerpts on archive pages
  */
 add_action( 'init', 'grand_xp_enable_excerpts_on_archive' );
 function grand_xp_enable_excerpts_on_archive() {
@@ -272,9 +280,7 @@ function grand_xp_enable_excerpts_on_archive() {
 function grand_xp_custom_loop_content() {
     ?>
     <div class="entry-content">
-        <?php 
-        the_excerpt(); 
-        ?>
+        <?php the_excerpt(); ?>
         <p><a class="button" href="<?php the_permalink(); ?>">Read More</a></p>
     </div>
     <?php
@@ -282,7 +288,6 @@ function grand_xp_custom_loop_content() {
 
 /**
  * 9. REMOVE ARCHIVE PREFIXES
- * Removes "Category:", "Tag:", etc. from archive titles
  */
 add_filter( 'get_the_archive_title', 'grand_xp_remove_archive_prefix' );
 function grand_xp_remove_archive_prefix( $title ) {
