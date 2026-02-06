@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.36
+Version: 1.0.37
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -248,6 +248,18 @@ article.post .entry-title {
     width: 100%;
     height: 200px;
     object-fit: cover;
+}
+
+/* Fix for linked images inside experience cards */
+.experience-cards .wp-block-image a {
+    display: block;
+    width: 100%;
+}
+
+/* Ensure the image fills that anchor container */
+.experience-cards .wp-block-image a img {
+    width: 100%;
+    display: block; /* Removes tiny gap at bottom of image */
 }
 
 /* =========================================
