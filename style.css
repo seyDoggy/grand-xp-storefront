@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.39
+Version: 1.0.40
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -306,4 +306,24 @@ article.post .entry-title {
         font-size: 16px;
     }
     body.has-sticky-cta { padding-bottom: 70px; }
+}
+
+/* Force Hide Desktop Header on Mobile */
+@media screen and (max-width: 767px) {
+    .hide-on-mobile {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
+}
+
+/* Force Hide Mobile Header on Desktop */
+@media screen and (min-width: 768px) {
+    .hide-on-desktop {
+        display: none !important;
+        visibility: hidden !important;
+        height: 0 !important;
+        width: 0 !important;
+    }
 }
