@@ -100,7 +100,8 @@ function grand_xp_get_current_id() {
 function grand_xp_should_show_header_cta() {
     $current_id = grand_xp_get_current_id();
     
-    // 1. CHECK OVERRIDES
+    // 1. CHECK OVERRIDES (Priority: High)
+    // If you entered a Flow ID or Item ID, we ALWAYS show the button.
     if ( $current_id ) {
         $item_id = get_post_meta( $current_id, 'fh_item_id', true );
         $flow_id = get_post_meta( $current_id, 'fh_flow_id', true );
@@ -109,18 +110,15 @@ function grand_xp_should_show_header_cta() {
         }
     }
     
-    // 2. CHECK EXCLUSIONS
-    global $post; 
-    $parent_slug = 'find-your-experience';
-    $parent_page = get_page_by_path( $parent_slug );
-    $parent_id   = $parent_page ? $parent_page->ID : 0;
+    // 2. CHECK CUSTOM FIELD EXCLUSION (Priority: Medium)
+    // If the custom field 'ge_hide_header_cta' is set to true/1, hide the button.
+    if ( $current_id && get_post_meta( $current_id, 'ge_hide_header_cta', true ) ) {
+        return false;
+    }
 
-    $is_excluded = is_page( $parent_slug ) 
-                || ( $parent_id && is_page() && ! empty( $post ) && in_array( $parent_id, get_post_ancestors( $post ) ) )
-                || is_page( 'contact-us' )
-                || is_page( 'contest' );
-
-    return ! $is_excluded;
+    // 3. DEFAULT (Priority: Low)
+    // Show the generic "Book Your Adventure" button everywhere else.
+    return true;
 }
 
 // Add 'has-sticky-cta' class to body
@@ -316,6 +314,7 @@ function grand_xp_get_quick_edit_fields() {
         'fh_item_id'    => 'FH Item ID',
         'fh_flow_id'    => 'FH Flow ID',
         'fh_cta_text'   => 'FH Button Text',
+		'ge_hide_header_cta' => 'Hide Header CTA',
     );
 }
 
