@@ -659,3 +659,63 @@ function grand_xp_fh_shortcode_shim( $atts, $content = 'Book Now' ) {
     // 9. Output
     return '<a href="' . esc_url( $url ) . '" onclick="' . $onclick . '" class="' . esc_attr( $atts['class'] ) . '">' . do_shortcode( $content ) . '</a>';
 }
+
+/**
+ * 15. VIRTUAL PAGE HIERARCHY (Admin Sections)
+ * Adds a taxonomy to Pages. WordPress AUTOMATICALLY adds this to Quick/Bulk Edit.
+ */
+add_action( 'init', 'grand_xp_register_page_sections' );
+function grand_xp_register_page_sections() {
+    $labels = array(
+        'name'              => 'Admin Sections',
+        'singular_name'     => 'Section',
+        'menu_name'         => 'Page Sections',
+        'search_items'      => 'Search Sections',
+        'all_items'         => 'All Sections',
+        'parent_item'       => 'Parent Section',
+        'parent_item_colon' => 'Parent Section:',
+        'edit_item'         => 'Edit Section',
+        'update_item'       => 'Update Section',
+        'add_new_item'      => 'Add New Section',
+        'new_item_name'     => 'New Section Name',
+    );
+
+    $args = array(
+        'hierarchical'      => true, // Checklist style (like Categories)
+        'labels'            => $labels,
+        'show_ui'           => true,
+        'show_admin_column' => true, // Adds column to All Pages
+        'query_var'         => true,
+        'rewrite'           => false, // Flat URLs preserved
+        'public'            => false, // No frontend archive
+        'show_in_rest'      => true,  // Block Editor support
+        'show_in_quick_edit'=> true,  // Native Quick/Bulk Edit support
+    );
+
+    register_taxonomy( 'page_section', array( 'page' ), $args );
+}
+
+/**
+ * Filter Dropdown for Admin Sections
+ */
+add_action( 'restrict_manage_posts', 'grand_xp_filter_pages_by_section' );
+function grand_xp_filter_pages_by_section( $post_type ) {
+    if ( 'page' !== $post_type ) {
+        return;
+    }
+    $taxonomy = 'page_section';
+    $selected = isset( $_GET[$taxonomy] ) ? $_GET[$taxonomy] : 0;
+    
+    wp_dropdown_categories( array(
+        'show_option_all' => 'Show All Sections',
+        'taxonomy'        => $taxonomy,
+        'name'            => $taxonomy,
+        'orderby'         => 'name',
+        'selected'        => $selected,
+        'hierarchical'    => true,
+        'value_field'     => 'slug',
+        'depth'           => 3,
+        'show_count'      => true,
+        'hide_empty'      => false,
+    ));
+}
