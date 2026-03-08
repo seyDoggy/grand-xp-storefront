@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.41
+Version: 1.0.42
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -12,18 +12,18 @@ body {
     background-color: #f9efd6;
 }
 
-/* Force White Text on standard pages (Excluding Blog/Archives) */
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) {
+/* Force White Text on standard pages (Excluding Mailpoet) */
+body:not(.mailpoet_page-template-default) {
     color: #ffffff;
 }
 
 /* Headings (H1-H6) on standard pages */
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h1,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h2,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h3,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h4,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h5,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) h6 {
+body:not(.mailpoet_page-template-default) h1,
+body:not(.mailpoet_page-template-default) h2,
+body:not(.mailpoet_page-template-default) h3,
+body:not(.mailpoet_page-template-default) h4,
+body:not(.mailpoet_page-template-default) h5,
+body:not(.mailpoet_page-template-default) h6 {
     color: #ffffff;
 }
 
@@ -33,10 +33,10 @@ a:focus, input:focus, textarea:focus, button:focus { outline: none; }
 .edit-link { display: none; }
 
 /* Table Fixes: Remove default striping on dark pages */
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table table,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table tr,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table th,
-body:not(.single-post):not(.archive):not(.blog):not(.mailpoet_page-template-default) .wp-block-table td {
+body:not(.mailpoet_page-template-default) .wp-block-table table,
+body:not(.mailpoet_page-template-default) .wp-block-table tr,
+body:not(.mailpoet_page-template-default) .wp-block-table th,
+body:not(.mailpoet_page-template-default) .wp-block-table td {
     background-color: transparent !important;
     color: #ffffff !important;
     border-color: rgba(255, 255, 255, 0.3);
@@ -167,11 +167,11 @@ article > div > img.wp-post-image {
     display: none !important;
 }
 
-/* White Card Style for Posts */
+/* Dark Card Style for Posts */
 article.post {
-    background-color: #ffffff !important;
+    background-color: #222222 !important;
     padding: 0 20px; /* Sides only, as requested */
-    border: 1px solid #e8e8e8;
+    border: 1px solid #333333;
     border-radius: 5px;
     display: flex;
     flex-direction: column;

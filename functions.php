@@ -198,17 +198,13 @@ if ( class_exists( 'WooCommerce' ) ) {
  */
 add_action( 'enqueue_block_editor_assets', 'grand_xp_custom_editor_colors' );
 function grand_xp_custom_editor_colors() {
-    global $post;
-    if ( ! isset( $post ) ) return;
-    if ( 'post' !== $post->post_type ) {
-        $custom_editor_css = '
-            .editor-styles-wrapper, .editor-styles-wrapper p, .editor-styles-wrapper li { color: #ffffff !important; }
-            .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, 
-            .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { color: #ffffff !important; }
-            .editor-styles-wrapper { background-color: #222222 !important; }
-        ';
-        wp_add_inline_style( 'wp-block-library', $custom_editor_css );
-    }
+    $custom_editor_css = '
+        .editor-styles-wrapper, .editor-styles-wrapper p, .editor-styles-wrapper li { color: #ffffff !important; }
+        .editor-styles-wrapper h1, .editor-styles-wrapper h2, .editor-styles-wrapper h3, 
+        .editor-styles-wrapper h4, .editor-styles-wrapper h5, .editor-styles-wrapper h6 { color: #ffffff !important; }
+        .editor-styles-wrapper { background-color: #222222 !important; }
+    ';
+    wp_add_inline_style( 'wp-block-library', $custom_editor_css );
 }
 
 /**
