@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.42
+Version: 1.0.43
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -159,6 +159,13 @@ input[type=button], input[type=reset], input[type=submit], .button,
 /* =========================================
    6. BLOG & ARCHIVE STYLING
    ========================================= */
+
+/* Custom background for blog, archive, and single post content areas */
+body.blog .site-content,
+body.archive .site-content,
+body.single-post .site-content {
+    background-color: #212a25;
+}
 
 /* Hide Featured Images Everywhere */
 .blog .type-post .wp-post-image,
