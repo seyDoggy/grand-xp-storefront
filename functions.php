@@ -715,3 +715,16 @@ function grand_xp_filter_pages_by_section( $post_type ) {
         'hide_empty'      => false,
     ));
 }
+
+/**
+ * 16. shortcode for dynamic copyright year in footer
+ * Adds shortcode [copyright] that outputs: © 2024 
+ */
+function custom_copyright_year_shortcode() {
+    $site_name = get_bloginfo( 'name' ); // Gets the site title from WordPress settings
+    $current_year = date( 'Y' ); // Gets the current year dynamically
+
+    // Outputs the copyright symbol, current year, and site name
+    return "&copy; " . $current_year; 
+}
+add_shortcode( 'copyright', 'custom_copyright_year_shortcode' );
