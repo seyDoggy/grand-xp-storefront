@@ -1,7 +1,6 @@
 <?php
 /**
  * Grand Experiences Storefront Child Theme Functions
- * Updated: Feb 2026
  * Author: Adam Merrifield
  */
 
