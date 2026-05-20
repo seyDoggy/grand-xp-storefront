@@ -253,7 +253,10 @@ function grand_xp_output_local_schema() {
             "https://www.youtube.com/@grand_experiences",
             "https://www.linkedin.com/company/grand-experiences/",
             "https://x.com/GrandExpCo",
-            "https://www.threads.net/@grand_experiences"
+            "https://www.threads.net/@grand_experiences",
+            "https://en.wikipedia.org/wiki/Grand_River_(Ontario)",
+            "https://en.wikipedia.org/wiki/Paris,_Ontario",
+            "https://bingemans.com/grand-river-experiences/"
           ]
         }
       ]
