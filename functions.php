@@ -730,3 +730,19 @@ function custom_copyright_year_shortcode() {
     return "&copy; " . $current_year; 
 }
 add_shortcode( 'copyright', 'custom_copyright_year_shortcode' );
+
+/**
+ * 17. Safe Email shortcode
+ * Adds shortcode to obfuscate plain text email addresses
+ */
+function custom_hide_email_shortcode( $atts ) {
+    extract( shortcode_atts( array(
+        'address' => '',
+    ), $atts ) );
+
+    $email = sanitize_email( $address );
+    $obfuscated_email = antispambot( $email );
+    
+    return '<a href="mailto:' . $obfuscated_email . '">' . $obfuscated_email . '</a>';
+}
+add_shortcode( 'safe_email', 'custom_hide_email_shortcode' );
