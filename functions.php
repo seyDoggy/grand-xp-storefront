@@ -168,31 +168,6 @@ function grand_xp_add_cta_to_storefront_header() {
 }
 
 /**
- * 5. WOOCOMMERCE UTILITIES
- */
-if ( class_exists( 'WooCommerce' ) ) {
-    add_action( 'get_header', 'grand_xp_remove_storefront_sidebar' );
-    function grand_xp_remove_storefront_sidebar() {
-        if ( is_product() || is_product_category()) {
-            remove_action( 'storefront_sidebar', 'storefront_get_sidebar', 10 );
-        }
-    }
-
-    add_action( 'woocommerce_checkout_process', 'grand_xp_anti_fraud_ip_checker', 10 );
-    function grand_xp_anti_fraud_ip_checker() {
-        $customer_ip = WC_Geolocation::get_ip_address();
-        $last_1_hour_from_ip_results = wc_get_orders( array(
-            'date_created'        => '>=' . ( time() - 3600 ),
-            'customer_ip_address' => $customer_ip,
-            'paginate'            => true
-        ) );
-        if( empty( $customer_ip ) || ( isset( $last_1_hour_from_ip_results->total ) && $last_1_hour_from_ip_results->total > 10 ) ) { 
-            wc_add_notice( 'Too many attempts in the last hour. Please return later.', 'error' );
-        }
-    }
-}
-
-/**
  * 6. CUSTOM EDITOR STYLES
  */
 add_action( 'enqueue_block_editor_assets', 'grand_xp_custom_editor_colors' );
