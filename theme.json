@@ -1,0 +1,19 @@
+{
+    "version": 3,
+    "settings": {
+        "spacing": {
+            "blockGap": null
+        }
+    },
+    "styles": {
+        "blocks": {
+            "core/columns": {
+                "spacing": {
+                    "margin": {
+                        "top": "0px"
+                    }
+                }
+            }
+        }
+    }
+}
