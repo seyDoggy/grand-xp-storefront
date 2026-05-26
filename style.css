@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.0.48
+Version: 1.1.1
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -224,7 +224,11 @@ article.post .entry-title {
 /* =========================================
    7. EXPERIENCE PRODUCT CARDS
    ========================================= */
-.experience-cards .wp-block-column {
+.wp-block-columns.experience-cards {
+    margin-top: 40px;
+}
+
+.wp-block-columns.experience-cards .wp-block-column {
     border-radius: 10px;
     padding: 15px !important;
     box-shadow: 0 4px 6px rgba(0,0,0,0.05);
