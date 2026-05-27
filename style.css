@@ -1,5 +1,5 @@
 /* Theme Name: Grand-XP child theme of storefront
-Version: 1.1.1
+Version: 1.1.2
 Author: Adam Merrifield
 Author URI: https://seydoggy.com
 Template: storefront
@@ -77,6 +77,21 @@ h6 svg.svg-inline--fa {
     margin-right: 0;
 }
 
+/* 1. Target the Block API v3 layout containers globally on logged-in views to strip section margins */
+body.logged-in .is-layout-flex,
+body.logged-in .is-layout-flow {
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* 2. IMMEDIATELY restore internal margins/gaps for all nested child blocks so your grids don't crush */
+body.logged-in .is-layout-flex * .is-layout-flex,
+body.logged-in .is-layout-flow * .is-layout-flow,
+body.logged-in .wp-block-column,
+body.logged-in .wp-block-column > * {
+    margin-top: var(--wp--style--block-gap, 1.5em) !important;
+    margin-bottom: var(--wp--style--block-gap, 1.5em) !important;
+}
 /* =========================================
    3. BUTTONS & FORMS
    ========================================= */
